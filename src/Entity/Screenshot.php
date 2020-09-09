@@ -20,11 +20,10 @@ class Screenshot
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $fileName;
+    private $filename;
 
     /**
      * @ORM\ManyToOne(targetEntity=App::class, inversedBy="screenshots")
-     * @ORM\JoinColumn(nullable=false)
      */
     private $app;
 
@@ -33,14 +32,14 @@ class Screenshot
         return $this->id;
     }
 
-    public function getFileName(): ?string
+    public function getFilename(): ?string
     {
-        return $this->fileName;
+        return $this->filename;
     }
 
-    public function setFileName(string $fileName): self
+    public function setFilename(string $filename): self
     {
-        $this->fileName = $fileName;
+        $this->filename = $filename;
 
         return $this;
     }

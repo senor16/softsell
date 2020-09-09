@@ -20,11 +20,6 @@ class Genre
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $tag;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
     private $fr;
 
     /**
@@ -35,23 +30,11 @@ class Genre
     /**
      * @ORM\Column(type="boolean")
      */
-    private $isGame;
+    private $is_game;
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getTag(): ?string
-    {
-        return $this->tag;
-    }
-
-    public function setTag(string $tag): self
-    {
-        $this->tag = $tag;
-
-        return $this;
     }
 
     public function getFr(): ?string
@@ -80,12 +63,12 @@ class Genre
 
     public function getIsGame(): ?bool
     {
-        return $this->isGame;
+        return $this->is_game;
     }
 
-    public function setIsGame(bool $isGame): self
+    public function setIsGame(bool $is_game): self
     {
-        $this->isGame = $isGame;
+        $this->is_game = $is_game;
 
         return $this;
     }

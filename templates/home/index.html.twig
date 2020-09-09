@@ -3,16 +3,89 @@
 {% block title %}Bienvenu chez Jakpaa! ✅{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
 
-<div class="example-wrapper">
-    <div style="text-align: center; margin-top:20%;">
-    <h1>Bienvenu chez Jakpaa! ✅</h1>
-        <img src="{{ asset('images/under-construction.gif') }}" alt="Site web en construction"/>
+    <div class="row">
+        <div class="col-3">
+            <figure>
+                <img class="logo" src="{{ asset('images/jakpaalogo .png') }}" alt="Logo Jakpaa"/>
+                <figcaption>My Lightning <b><i>Jakpaa,</i></b></figcaption>
+            </figure>
+        </div>
+        <div class="col-7">
+            <h3><b><i>Jakpaa,</i></b> pourquoi ce nom ? <br/>
+                Qu'est ce que cela signifie ?
+            </h3>
+            <p>
+                <b><i>Jakpaa,</i></b> est un terme utilisé dans la culture Toupouri pour désigner le dernier né de la
+                famille.
+                Le <b><i>Jakpaa,</i></b> est le plus choyé, le préféré des parents, ses frères et soeurs veillent sur
+                lui et le protègent.
+                Toute la famille est à ses petits soins et veille à ce qu'il ne manque de rien.
+            </p>
+            <p>
+                Vous êtes notre <b><i>Jakpaa,</i></b>, notre préféré, la prunelle de nos yeux.<br/>
+                Nous souhaitons vous aider, vous, développeur,
+                à distribuer et monéstiser vots applications.<br/>
+                Notre but est de faire de vou un développeur qui vit de ses applications.
+            </p>
+        </div>
+    </div><z></z>
+    <div id="sommaire">
+        <h3>Pour quoi devenir notre <b><i>Jakpaa</i></b></h3>
+        <ol>
+            <a href="#economie">
+                <li>Vous ferez des économies</li>
+            </a>
+            <a href="#portee">
+                <li>Vous atteindrez plus de monde</li>
+            </a>
+            <a href="#commision">
+                <li>C'est vous qui fixez le pourcentage de la commission que nous prélevons</li>
+            </a>
+        </ol>
     </div>
+    <ol>
+        <div id="economie">
+            <a href="#sommaire">
+                <li>Vous ferez des économies</li>
+            </a>
+            <p>
+                Pour publier une application sur des stores tels que Play Store ou Steam, vous devez créer un compte
+                développer qui est payant.
+                <br/>Chez nous, vous publiez gratuitement vos applications.
+            </p>
+        </div>
 
-</div>
+
+        <div id="portee">
+            <a href="#sommaire">
+                <li>Vous atteindrez plus de monde</li>
+            </a>
+            <p>
+                Les achats sur les autres store se font par le bias d'une carte VISA ou d'un compte PayPal.
+                La plus part de ceux qui disposent d'une carte VISA sont ceux qui ont emploi et dispose d'un compte
+                bancaire, ce qui
+                constitue un pourcentage assez réduite de la population, vu le taux de chômage.
+            </p>
+            <p>
+                Nous prenons en charge le paiement par les services de Mobile Money tels que Orange Money, MTN Mobile
+                Money,
+                EU Mobile Mobile ...<br/>
+                La quasitotalité de la population disposant d'au moins un de ces comptes, vous pourrez atteindre plus de
+                personnes.
+            </p>
+        </div>
+
+        <div id="commision">
+            <a href="#sommaire">
+                <li>C'est vous qui fixez le pourcentage de la commission que nous prélevons</li>
+            </a>
+            <p>
+                Par défaut, nous prélevons 10% de commission sur vos ventes.
+                Vous pouvez l'augmenter si vous jugez que nos services méritent plus de rémunération.
+            </p>
+        </div>
+    </ol>
+
+
 {% endblock %}

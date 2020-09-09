@@ -25,9 +25,9 @@ class App
     private $title;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
-    private $shortDescription;
+    private $short_description;
 
     /**
      * @ORM\Column(type="text")
@@ -35,12 +35,7 @@ class App
     private $description;
 
     /**
-     * @ORM\Column(type="boolean")
-     */
-    private $isGame;
-
-    /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="integer")
      */
     private $price;
 
@@ -50,10 +45,14 @@ class App
     private $cover;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="publishedApp")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\Column(type="string", length=255)
      */
-    private $user;
+    private $classification;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Screenshot::class, mappedBy="app")
+     */
+    private $screenshots;
 
     /**
      * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="app", orphanRemoval=true)
@@ -61,14 +60,9 @@ class App
     private $comments;
 
     /**
-     * @ORM\OneToMany(targetEntity=Screenshot::class, mappedBy="app", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Executable::class, mappedBy="app")
      */
-    private $screenshots;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $addedAt;
+    private $executables;
 
     /**
      * @ORM\OneToOne(targetEntity=Genre::class, cascade={"persist", "remove"})
@@ -77,21 +71,26 @@ class App
     private $genre;
 
     /**
-     * @ORM\OneToOne(targetEntity=Analytic::class, inversedBy="app", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity=Developer::class, inversedBy="uploads")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $analytics;
+    private $developer;
 
     /**
-     * @ORM\OneToOne(targetEntity=File::class, inversedBy="app", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\Column(type="integer")
      */
-    private $file;
+    private $views;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
 
     public function __construct()
     {
-        $this->comments = new ArrayCollection();
         $this->screenshots = new ArrayCollection();
+        $this->comments = new ArrayCollection();
+        $this->executables = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -111,14 +110,19 @@ class App
         return $this;
     }
 
-    public function getShortDescription(): ?string
+    public function __toString()
     {
-        return $this->shortDescription;
+        return $this->title;
     }
 
-    public function setShortDescription(?string $shortDescription): self
+    public function getShortDescription(): ?string
     {
-        $this->shortDescription = $shortDescription;
+        return $this->short_description;
+    }
+
+    public function setShortDescription(string $short_description): self
+    {
+        $this->short_description = $short_description;
 
         return $this;
     }
@@ -135,24 +139,12 @@ class App
         return $this;
     }
 
-    public function getIsGame(): ?bool
-    {
-        return $this->isGame;
-    }
-
-    public function setIsGame(bool $isGame): self
-    {
-        $this->isGame = $isGame;
-
-        return $this;
-    }
-
     public function getPrice(): ?int
     {
         return $this->price;
     }
 
-    public function setPrice(?int $price): self
+    public function setPrice(int $price): self
     {
         $this->price = $price;
 
@@ -171,14 +163,45 @@ class App
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getClassification(): ?string
     {
-        return $this->user;
+        return $this->classification;
     }
 
-    public function setUser(?User $user): self
+    public function setClassification(string $classification): self
     {
-        $this->user = $user;
+        $this->classification = $classification;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Screenshot[]
+     */
+    public function getScreenshots(): Collection
+    {
+        return $this->screenshots;
+    }
+
+    public function addScreenshot(Screenshot $screenshot): self
+    {
+        if (!$this->screenshots->contains($screenshot)) {
+            $this->screenshots[] = $screenshot;
+            $screenshot->setApp($this);
+        }
+
+        return $this;
+    }
+
+    public function removeScreenshot(Screenshot $screenshot): self
+    {
+        if ($this->screenshots->contains($screenshot)) {
+            $this->screenshots->removeElement($screenshot);
+            // set the owning side to null (unless already changed)
+            if ($screenshot->getApp() === $this) {
+                $screenshot->setApp(null);
+            }
+        }
 
         return $this;
     }
@@ -215,44 +238,32 @@ class App
     }
 
     /**
-     * @return Collection|Screenshot[]
+     * @return Collection|Executable[]
      */
-    public function getScreenshots(): Collection
+    public function getExecutables(): Collection
     {
-        return $this->screenshots;
+        return $this->executables;
     }
 
-    public function addScreenshot(Screenshot $screenshot): self
+    public function addExecutable(Executable $executable): self
     {
-        if (!$this->screenshots->contains($screenshot)) {
-            $this->screenshots[] = $screenshot;
-            $screenshot->setApp($this);
+        if (!$this->executables->contains($executable)) {
+            $this->executables[] = $executable;
+            $executable->setApp($this);
         }
 
         return $this;
     }
 
-    public function removeScreenshot(Screenshot $screenshot): self
+    public function removeExecutable(Executable $executable): self
     {
-        if ($this->screenshots->contains($screenshot)) {
-            $this->screenshots->removeElement($screenshot);
+        if ($this->executables->contains($executable)) {
+            $this->executables->removeElement($executable);
             // set the owning side to null (unless already changed)
-            if ($screenshot->getApp() === $this) {
-                $screenshot->setApp(null);
+            if ($executable->getApp() === $this) {
+                $executable->setApp(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getAddedAt(): ?\DateTimeInterface
-    {
-        return $this->addedAt;
-    }
-
-    public function setAddedAt(\DateTimeInterface $addedAt): self
-    {
-        $this->addedAt = $addedAt;
 
         return $this;
     }
@@ -269,26 +280,38 @@ class App
         return $this;
     }
 
-    public function getAnalytics(): ?Analytic
+    public function getDeveloper(): ?Developer
     {
-        return $this->analytics;
+        return $this->developer;
     }
 
-    public function setAnalytics(Analytic $analytics): self
+    public function setDeveloper(?Developer $developer): self
     {
-        $this->analytics = $analytics;
+        $this->developer = $developer;
 
         return $this;
     }
 
-    public function getFile(): ?File
+    public function getViews(): ?int
     {
-        return $this->file;
+        return $this->views;
     }
 
-    public function setFile(File $file): self
+    public function setViews(int $views): self
     {
-        $this->file = $file;
+        $this->views = $views;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }

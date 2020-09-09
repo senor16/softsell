@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Apps{% endblock %}
+
+{% block body %}
+    {% for app in apps %}
+        <div class="row">
+            <div class="col-2">
+                <a href="{{ path('app-details',{id:app.id}) }}"><img src="{{ asset('uploads/images/'~app.id~'/cover.png') }}" alt="Cover {{ app.title }}"/></a>
+            </div>
+            <div class="col">
+                <h3><a href="{{ path('app-details',{id:app.id}) }}"> {{ app.title }}</a></h3>
+                <p>{{ app.shortDescription }}</p>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

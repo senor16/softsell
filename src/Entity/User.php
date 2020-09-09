@@ -22,7 +22,17 @@ class User
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $pseudo;
+    private $first_name;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $last_name;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $gender;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -32,31 +42,21 @@ class User
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $firstName;
+    private $password;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\ManyToMany(targetEntity=App::class)
      */
-    private $lastName;
+    private $downloads;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="datetime")
      */
-    private $gender;
-
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $isDevelopper;
-
-    /**
-     * @ORM\OneToMany(targetEntity=App::class, mappedBy="user", orphanRemoval=true)
-     */
-    private $publishedApp;
+    private $createdAt;
 
     public function __construct()
     {
-        $this->publishedApp = new ArrayCollection();
+        $this->downloads = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -64,50 +64,26 @@ class User
         return $this->id;
     }
 
-    public function getPseudo(): ?string
-    {
-        return $this->pseudo;
-    }
-
-    public function setPseudo(string $pseudo): self
-    {
-        $this->pseudo = $pseudo;
-
-        return $this;
-    }
-
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(string $email): self
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
     public function getFirstName(): ?string
     {
-        return $this->firstName;
+        return $this->first_name;
     }
 
-    public function setFirstName(string $firstName): self
+    public function setFirstName(string $first_name): self
     {
-        $this->firstName = $firstName;
+        $this->first_name = $first_name;
 
         return $this;
     }
 
     public function getLastName(): ?string
     {
-        return $this->lastName;
+        return $this->last_name;
     }
 
-    public function setLastName(string $lastName): self
+    public function setLastName(string $last_name): self
     {
-        $this->lastName = $lastName;
+        $this->last_name = $last_name;
 
         return $this;
     }
@@ -124,14 +100,26 @@ class User
         return $this;
     }
 
-    public function getIsDevelopper(): ?bool
+    public function getEmail(): ?string
     {
-        return $this->isDevelopper;
+        return $this->email;
     }
 
-    public function setIsDevelopper(bool $isDevelopper): self
+    public function setEmail(string $email): self
     {
-        $this->isDevelopper = $isDevelopper;
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): self
+    {
+        $this->password = $password;
 
         return $this;
     }
@@ -139,30 +127,37 @@ class User
     /**
      * @return Collection|App[]
      */
-    public function getPublishedApp(): Collection
+    public function getDownloads(): Collection
     {
-        return $this->publishedApp;
+        return $this->downloads;
     }
 
-    public function addPublishedApp(App $publishedApp): self
+    public function addDownload(App $download): self
     {
-        if (!$this->publishedApp->contains($publishedApp)) {
-            $this->publishedApp[] = $publishedApp;
-            $publishedApp->setUser($this);
+        if (!$this->downloads->contains($download)) {
+            $this->downloads[] = $download;
         }
 
         return $this;
     }
 
-    public function removePublishedApp(App $publishedApp): self
+    public function removeDownload(App $download): self
     {
-        if ($this->publishedApp->contains($publishedApp)) {
-            $this->publishedApp->removeElement($publishedApp);
-            // set the owning side to null (unless already changed)
-            if ($publishedApp->getUser() === $this) {
-                $publishedApp->setUser(null);
-            }
+        if ($this->downloads->contains($download)) {
+            $this->downloads->removeElement($download);
         }
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }

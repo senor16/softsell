@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ app.title }}{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-8">
+            <h2>{{ app }}</h2>
+            <div class="card-img"> <a href="{{ asset('uploads/images/'~app.id~'/cover.png') }}"> <img width="660" src="{{ asset('uploads/images/'~app.id~'/cover.png') }}" alt="cover"/></a></div>
+            <p>{{ app.shortDescription }}</p>
+            <p>{{ app.description }}</p>
+            {% if app.executables|length >0 %}
+                <p>Télécharger pour :
+                {% for executable in app.executables %}
+                    <a href="{{ asset('uploads/files/'~app.id~'/'~executable.filename) }}">{{ executable.platform }}</a> : {{ executable.showSize }}
+                {% endfor %}
+                </p>
+            {% endif %}
+            <p></p>
+            <div>
+                <h4><b>
+                {% if comments|length == 1 %}
+                    Commentaire
+                {% else %}
+                    Commentaires
+                {% endif %}
+                    </b></h4>
+            </div>
+            {% if comments|length > 0 %}
+                {% for comment in comments %}
+                    <h5>{{ comment.author }} ({{ comment.email }})</h5>
+                    <small>{{ comment.createdAt|format_datetime('medium', 'short') }}</small>
+                    <p>{{ comment.text }}</p>
+                {% endfor %}
+                {% if previous >= 0 %}
+                    <a href="{{ path('app-details', {id:app.id, offset:previous}) }}">Précédent</a>
+                {% endif %}
+                {% if next < comments|length %}
+                    <a href="{{ path('app-details', {id:app.id, offset:next}) }}">Suivant</a>
+                {% endif %}
+            {% else %}
+                <div>Aucune application n'a été publiée. <span class="fa fa-sad-cry"></span></div>
+            {% endif %}
+        </div>
+        <div class="col-4">
+            {% if app.screenshots|length > 0 %}
+                <h4>Captures d'écran</h4>
+                {% for screenshot in app.screenshots %}
+                    <p><a href="{{ asset('uploads/images/'~app.id~'/'~screenshot.filename) }}"> <img src="{{ asset('uploads/images/'~app.id~'/'~screenshot.filename) }}" alt="Screenshot "/></a></p>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

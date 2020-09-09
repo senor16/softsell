@@ -4,7 +4,10 @@ namespace App\Controller\Admin;
 
 use App\Entity\App;
 use App\Entity\Comment;
+use App\Entity\Developer;
+use App\Entity\Executable;
 use App\Entity\Genre;
+use App\Entity\Language;
 use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\CrudUrlGenerator;
@@ -24,7 +27,7 @@ class DashboardController extends AbstractDashboardController
 //        return parent::index();
         //Redirect to some crud controller
         $routeBuilder = $this->get(CrudUrlGenerator::class)->build();
-        return $this->redirect($routeBuilder->setController(CommentCrudController::class)->generateUrl());
+        return $this->redirect($routeBuilder->setController(AppCrudController::class)->generateUrl());
     }
 
     public function configureDashboard(): Dashboard
@@ -39,10 +42,13 @@ class DashboardController extends AbstractDashboardController
 //        yield MenuItem::linkToCrud('The Label', 'icon class', EntityClass::class);
         return [
           MenuItem::linktoDashboard('Dashboard','fa fa-home'),
+          MenuItem::linkToCrud('Developer','fa fa-user-circle',Developer::class),
           MenuItem::linkToCrud('User','fa fa-user',User::class),
+          MenuItem::linkToCrud('App','fa fa-file-code',App::class),
+          MenuItem::linkToCrud('Executable','fa fa-file',Executable::class),
           MenuItem::linkToCrud('Comments','fa fa-comments',Comment::class),
-          MenuItem::linkToCrud('Genre','fa fa-tag',Genre::class),
-          MenuItem::linkToCrud('App','fa fa-cloud',App::class)
+          MenuItem::linkToCrud('Genre','fa fa-tags',Genre::class),
+          MenuItem::linkToCrud('Language','fa fa-american-sign-language-interpreting',Language::class),
         ];
     }
 }
