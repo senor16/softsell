@@ -32,7 +32,7 @@ class AppController extends AbstractController
     }
 
     /**
-     * @Route("/app/{id}", name="app-details")
+     * @Route("/app/{slug}", name="app-details")
      */
     public function show(Request $request, App $app, CommentRepository $commentRepository){
         $offset = max(0, $request->query->getInt('offset',0));

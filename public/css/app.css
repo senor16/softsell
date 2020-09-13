@@ -3,6 +3,7 @@ object, embed, video {
     max-width: 100%;
 }
 
-.logo{
-    margin-top: 10px;
+header{
+    margin: 10px;
 }
+

@@ -3,27 +3,42 @@
 {% block title %}{{ app.title }}{% endblock %}
 
 {% block body %}
+    <header>
+
+    </header>
+    <a href="{{ asset('uploads/images/'~app.id~'/cover.png') }}"> <img
+                src="{{ asset('uploads/images/'~app.id~'/cover.png') }}" alt="cover"/></a>
     <div class="row">
-        <div class="col-8">
+        <div class="col-7">
             <h2>{{ app }}</h2>
-            <div class="card-img"> <a href="{{ asset('uploads/images/'~app.id~'/cover.png') }}"> <img width="660" src="{{ asset('uploads/images/'~app.id~'/cover.png') }}" alt="cover"/></a></div>
             <p>{{ app.shortDescription }}</p>
             <p>{{ app.description }}</p>
+            <h4>Autheur  : {{ app.developer.firstName ~' '~ app.developer.lastName ~' ('~ app.developer.email ~')'}}</h4>
             {% if app.executables|length >0 %}
-                <p>Télécharger pour :
+                <h3><i class="fas fa-download"></i> Télécharger </h3>
                 {% for executable in app.executables %}
-                    <a href="{{ asset('uploads/files/'~app.id~'/'~executable.filename) }}">{{ executable.platform }}</a> : {{ executable.showSize }}
+                    <a href="{{ asset('uploads/files/'~app.id~'/'~executable.filename) }}">{{ app.title }}
+                        ({{ executable.platform }}) </a> : {{ executable.showSize }}
+                    {% if executable.platform == 'Windows' %}
+                        <i class="fab fa-windows"></i>
+                    {% elseif executable.platform == "Mac" %}
+                        <i class="fab fa-apple"></i>
+                    {% elseif executable.platform == "Linux" %}
+                        <i class="fab fa-linux"></i>
+                    {% elseif executable.platform == "Android" %}
+                        <i class="fab fa-Android"></i>
+                    {% endif %}
                 {% endfor %}
-                </p>
+
             {% endif %}
             <p></p>
             <div>
                 <h4><b>
-                {% if comments|length == 1 %}
-                    Commentaire
-                {% else %}
-                    Commentaires
-                {% endif %}
+                        {% if comments|length == 1 %}
+                            Commentaire
+                        {% else %}
+                            Commentaires
+                        {% endif %}
                     </b></h4>
             </div>
             {% if comments|length > 0 %}
@@ -33,20 +48,22 @@
                     <p>{{ comment.text }}</p>
                 {% endfor %}
                 {% if previous >= 0 %}
-                    <a href="{{ path('app-details', {id:app.id, offset:previous}) }}">Précédent</a>
+                    <a href="{{ path('app-details', {slug:app.slug, offset:previous}) }}">Précédent</a>
                 {% endif %}
                 {% if next < comments|length %}
-                    <a href="{{ path('app-details', {id:app.id, offset:next}) }}">Suivant</a>
+                    <a href="{{ path('app-details', {slug:app.slug, offset:next}) }}">Suivant</a>
                 {% endif %}
             {% else %}
-                <div>Aucune application n'a été publiée. <span class="fa fa-sad-cry"></span></div>
+                <div>Aucun commentaire n'a été publiée. </div>
             {% endif %}
         </div>
-        <div class="col-4">
+        <div class="col-5">
             {% if app.screenshots|length > 0 %}
                 <h4>Captures d'écran</h4>
                 {% for screenshot in app.screenshots %}
-                    <p><a href="{{ asset('uploads/images/'~app.id~'/'~screenshot.filename) }}"> <img src="{{ asset('uploads/images/'~app.id~'/'~screenshot.filename) }}" alt="Screenshot "/></a></p>
+                    <p><a href="{{ asset('uploads/images/'~app.id~'/'~screenshot.filename) }}"> <img
+                                    src="{{ asset('uploads/images/'~app.id~'/'~screenshot.filename) }}"
+                                    alt="Screenshot "/></a></p>
                 {% endfor %}
             {% endif %}
         </div>
