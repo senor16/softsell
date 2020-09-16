@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Bienvenu chez Jakpaa! ✅{% endblock %}
+{% block title %}Bienvenu Jakpaa! ✅{% endblock %}
 
 {% block body %}
 
@@ -10,13 +10,13 @@
             {% if app.cover == '-' %}
                 <p><a href="https://via.placeholder.com/250x150"> <img src="https://via.placeholder.com/250x150" alt="cover"/></a></p>
             {% else %}
-                <a href="{{ path('app-show',{slug:app.slug}) }}"><img
+                <a href="{{ path('app_show',{slug:app.slug}) }}"><img
                             src="{{ asset('uploads/images/'~app.developer.id~'/'~app.cover) }}"
                             alt="Cover {{ app.title }}"/></a>
             {% endif %}
         </div>
         <div class="card-title">
-            <h4><a class="card-link" href="{{ path('app-show',{slug:app.slug}) }}"> {{ app.title }}</a>
+            <h4><a class="card-link" href="{{ path('app_show',{slug:app.slug}) }}"> {{ app.title }}</a>
                 {% for executable in app.executables %}
                     {% if executable.platform == 'Windows' %}
                         <i class="fab fa-windows"></i>

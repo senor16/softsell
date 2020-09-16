@@ -51,10 +51,10 @@
                     <p>{{ comment.text }}</p>
                 {% endfor %}
                 {% if previous >= 0 %}
-                    <a href="{{ path('app-show', {slug:app.slug, offset:previous}) }}">Précédent</a>
+                    <a href="{{ path('app_show', {slug:app.slug, offset:previous}) }}">Précédent</a>
                 {% endif %}
                 {% if next < comments|length %}
-                    <a href="{{ path('app-show', {slug:app.slug, offset:next}) }}">Suivant</a>
+                    <a href="{{ path('app_show', {slug:app.slug, offset:next}) }}">Suivant</a>
                 {% endif %}
             {% else %}
                 <div>Aucun commentaire n'a été publiée.</div>

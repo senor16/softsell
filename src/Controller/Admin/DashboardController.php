@@ -20,7 +20,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 class DashboardController extends AbstractDashboardController
 {
     /**
-     * @Route("/admin", name="admin")
+     * @Route("/easyadmin", name="admin")
      */
     public function index(): Response
     {

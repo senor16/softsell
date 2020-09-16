@@ -42,8 +42,8 @@ class AppController extends AbstractController
     }
 
     /**
-     * @Route("/new", name="app-upload")
-     * @Route("/{slug}/edit" ,name="app-edit")
+     * @Route("/new", name="app_new")
+     * @Route("/{slug}/edit" ,name="app_edit")
      */
     public function form(App $app = null, Request $request, string $photoDir)
     {
@@ -75,7 +75,7 @@ class AppController extends AbstractController
             $this->entityManager->persist($app);
             $this->entityManager->flush();
 
-            return $this->redirectToRoute('app-show', ['slug' => $app->getSlug()]);
+            return $this->redirectToRoute('app_show', ['slug' => $app->getSlug()]);
         }
 
         return new Response(
@@ -90,7 +90,7 @@ class AppController extends AbstractController
     }
 
     /**
-     * @Route("/{slug}", name="app-show")
+     * @Route("/{slug}", name="app_show")
      */
     public function show(Request $request, App $app, CommentRepository $commentRepository)
     {
@@ -108,7 +108,7 @@ class AppController extends AbstractController
             $this->entityManager->persist($comment);
             $this->entityManager->flush();
 
-            return $this->redirectToRoute('app-show', ['slug' => $app->getSlug()]);
+            return $this->redirectToRoute('app_show', ['slug' => $app->getSlug()]);
         }
         $offset = max(0, $request->query->getInt('offset', 0));
         $paginator = $commentRepository->getCommentPAginator($app, $offset);
