@@ -32,6 +32,11 @@ class Genre
      */
     private $is_game;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $tag;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -69,6 +74,23 @@ class Genre
     public function setIsGame(bool $is_game): self
     {
         $this->is_game = $is_game;
+
+        return $this;
+    }
+
+    public function __toString()
+    {
+      return (string) $this->tag;
+    }
+
+    public function getTag(): ?string
+    {
+        return $this->tag;
+    }
+
+    public function setTag(string $tag): self
+    {
+        $this->tag = $tag;
 
         return $this;
     }

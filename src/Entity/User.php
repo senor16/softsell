@@ -54,6 +54,11 @@ class User
      */
     private $createdAt;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $pseudo;
+
     public function __construct()
     {
         $this->downloads = new ArrayCollection();
@@ -158,6 +163,18 @@ class User
     public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getPseudo(): ?string
+    {
+        return $this->pseudo;
+    }
+
+    public function setPseudo(string $pseudo): self
+    {
+        $this->pseudo = $pseudo;
 
         return $this;
     }

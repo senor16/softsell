@@ -7,10 +7,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 /**
  * @ORM\Entity(repositoryClass=AppRepository::class)
+ * @UniqueEntity("slug")
  */
 class App
 {
@@ -23,16 +26,22 @@ class App
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Length(min=3, max=255)
+     * @Assert\NotBlank()
      */
     private $title;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Length(min=10,max=255)
+     * @Assert\NotBlank()
      */
     private $short_description;
 
     /**
      * @ORM\Column(type="text")
+     * @Assert\Length(min=10)
+     * @Assert\NotBlank()
      */
     private $description;
 
@@ -43,13 +52,11 @@ class App
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\File
      */
     private $cover;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $classification;
+    
 
     /**
      * @ORM\OneToMany(targetEntity=Screenshot::class, mappedBy="app")
@@ -66,11 +73,6 @@ class App
      */
     private $executables;
 
-    /**
-     * @ORM\OneToOne(targetEntity=Genre::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $genre;
 
     /**
      * @ORM\ManyToOne(targetEntity=Developer::class, inversedBy="uploads")
@@ -89,9 +91,31 @@ class App
     private $createdAt;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=191, unique=true)
+     * @Assert\Length(min=1, max=191)
+     * @Assert\NotBlank()
      */
     private $slug;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\Length(min=3, max=255)
+     * @Assert\NotBlank()
+     */
+    private $classification;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\Length(min=3, max=255)
+     * @Assert\NotBlank()
+     */
+    private $genre;
+
+
+
+
+
+
 
     public function __construct()
     {
@@ -170,17 +194,7 @@ class App
         return $this;
     }
 
-    public function getClassification(): ?string
-    {
-        return $this->classification;
-    }
 
-    public function setClassification(string $classification): self
-    {
-        $this->classification = $classification;
-
-        return $this;
-    }
 
     /**
      * @return Collection|Screenshot[]
@@ -275,17 +289,7 @@ class App
         return $this;
     }
 
-    public function getGenre(): ?Genre
-    {
-        return $this->genre;
-    }
 
-    public function setGenre(Genre $genre): self
-    {
-        $this->genre = $genre;
-
-        return $this;
-    }
 
     public function getDeveloper(): ?Developer
     {
@@ -341,4 +345,29 @@ class App
             $this->slug = (string)$slugger->slug((string)$this)->lower();
         }
     }
+
+    public function getClassification(): ?string
+    {
+        return $this->classification;
+    }
+
+    public function setClassification(string $classification): self
+    {
+        $this->classification = $classification;
+
+        return $this;
+    }
+
+    public function getGenre(): ?string
+    {
+        return $this->genre;
+    }
+
+    public function setGenre(string $genre): self
+    {
+        $this->genre = $genre;
+
+        return $this;
+    }
+
 }

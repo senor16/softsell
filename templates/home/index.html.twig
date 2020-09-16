@@ -4,30 +4,33 @@
 
 {% block body %}
 
+
     {% for app in apps %}
         <div class="card-columns">
-            <a href="{{ path('app-details',{slug:app.slug}) }}"><img
-                        src="{{ asset('uploads/images/'~app.id~'/cover.png') }}"
-                        alt="Cover {{ app.title }}"/></a>
+            {% if app.cover == '-' %}
+                <p><a href="https://via.placeholder.com/250x150"> <img src="https://via.placeholder.com/250x150" alt="cover"/></a></p>
+            {% else %}
+                <a href="{{ path('app-show',{slug:app.slug}) }}"><img
+                            src="{{ asset('uploads/images/'~app.developer.id~'/'~app.cover) }}"
+                            alt="Cover {{ app.title }}"/></a>
+            {% endif %}
         </div>
         <div class="card-title">
-            <h4><a class="card-link" href="{{ path('app-details',{slug:app.slug}) }}"> {{ app.title }}</a>
-            {% for executable in app.executables %}
-                {% if executable.platform == 'Windows' %}
-                    <i class="fab fa-windows"></i>
-                {% elseif executable.platform == "Mac" %}
-                    <i class="fab fa-apple"></i>
-                {% elseif executable.platform == "Linux" %}
-                    <i class="fab fa-linux"></i>
-                {% elseif executable.platform == "Android" %}
-                    <i class="fab fa-Android"></i>
-                {% endif %}
-            {% endfor %}
+            <h4><a class="card-link" href="{{ path('app-show',{slug:app.slug}) }}"> {{ app.title }}</a>
+                {% for executable in app.executables %}
+                    {% if executable.platform == 'Windows' %}
+                        <i class="fab fa-windows"></i>
+                    {% elseif executable.platform == "Mac" %}
+                        <i class="fab fa-apple"></i>
+                    {% elseif executable.platform == "Linux" %}
+                        <i class="fab fa-linux"></i>
+                    {% elseif executable.platform == "Android" %}
+                        <i class="fab fa-Android"></i>
+                    {% endif %}
+                {% endfor %}
             </h4>
         </div>
         <p class="card-subtitle">{{ app.shortDescription }}</p>
     {% endfor %}
-
-
 
 {% endblock %}

@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+{% form_theme app_form 'bootstrap_4_layout.html.twig' %}
+{% block title %}
+    {% if(edit_mode) %}
+        Modification
+    {% else %}
+        Ajout d'une nouvelle application
+    {% endif %}
+{% endblock %}
+{% block body %}
+    <h1>
+        {% if(edit_mode) %}
+            Modification
+        {% else %}
+            Ajout d'une nouvelle application
+        {% endif %}
+    </h1>
+    {{ form_start (app_form) }}
+
+    {{ form_row(app_form.title, {
+        'attr': {
+            'placeholder':'Titre de l\'application',
+            'autofocus':'autofocus'
+        }
+    }) }}
+
+    {{ form_row(app_form.slug, {
+        'label':'Reférence',
+        'attr': {
+            'placeholder':'Reférence de l\'application'
+        }
+    }) }}
+
+    {{ form_row(app_form.short_description, {
+        'label':'Brève description',
+        'attr': {
+            'placeholder':'Courte description de l\'application'
+        }
+    }) }}
+
+    {{ form_row(app_form.description, {
+        'label':'Description',
+        'attr': {
+            'placeholder':'Description détaillée'
+        }
+    }) }}
+
+    {{ form_row(app_form.cover, {
+        'label':'Couverture',
+        'attr': {
+            'placeholder':'Image de couverture'
+        }
+    }) }}
+
+
+    {{ form_row(app_form.classification) }}
+
+    {{ form_row(app_form.genre) }}
+
+    {{ form_row(app_form.developer) }}
+
+    <button type="submit" class="btn btn-success">
+        {% if (edit_mode) %}
+            Enregistrer
+        {% else %}
+            Ajouter l'application
+        {% endif %}
+    </button>
+    {{ form_end(app_form) }}
+{% endblock %}
+
+
+

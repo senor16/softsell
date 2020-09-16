@@ -59,6 +59,16 @@ class Developer
      */
     private $createdAt;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $pseudo;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $avatar;
+
     public function __construct()
     {
         $this->uploads = new ArrayCollection();
@@ -195,6 +205,35 @@ class Developer
     public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getPseudo(): ?string
+    {
+        return $this->pseudo;
+    }
+
+    public function setPseudo(string $pseudo): self
+    {
+        $this->pseudo = $pseudo;
+
+        return $this;
+    }
+
+    public function __toString()
+    {
+        return (string)$this->pseudo;
+    }
+
+    public function getAvatar(): ?string
+    {
+        return $this->avatar;
+    }
+
+    public function setAvatar(string $avatar): self
+    {
+        $this->avatar = $avatar;
 
         return $this;
     }
