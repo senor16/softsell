@@ -43,9 +43,9 @@ class AppController extends AbstractController
 
     /**
      * @Route("/new", name="app_new")
-     * @Route("/{slug}/edit" ,name="app_edit")
+     * @Route("/{slug}/edit" ,name="app_edit" ,priority=-10)
      */
-    public function form(App $app = null, Request $request, string $photoDir)
+    public function form(App $app = null, Request $request, string $imageDir)
     {
         if (!$app) {
             $app = new App();
@@ -58,15 +58,15 @@ class AppController extends AbstractController
             if (!$app->getId()) {
                 $app->setCreatedAt(new \DateTime());
             }
-            if($photo = $form['cover']->getData()){
-                $filename = bin2hex(random_bytes(6)).'.'.$photo->guessExtension();
+            if($image = $form['cover']->getData()){
+                $filename = bin2hex(random_bytes(6)).'.'.$image->guessExtension();
             }
-            $photoDir= $photoDir.'/'.$app->getDeveloper()->getId();
+            $imageDir= $imageDir.'/'.$app->getDeveloper()->getId();
             try {
-                mkdir($photoDir);
+                mkdir($imageDir);
             }catch (\Exception $e){}
             try{
-                $photo->move($photoDir, $filename);
+                $image->move($imageDir, $filename);
             }catch (FileException $e){}
             $app->setCover($filename);
             $app->setPrice(0);
