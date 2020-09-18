@@ -5,19 +5,19 @@
 {% block body %}
 
 
-    {% for app in apps %}
+    {% for application in applications %}
         <div class="card-columns">
-            {% if app.cover == '-' %}
+            {% if application.cover == '-' %}
                 <p><a href="https://via.placeholder.com/250x150"> <img src="https://via.placeholder.com/250x150" alt="cover"/></a></p>
             {% else %}
-                <a href="{{ path('app_show',{slug:app.slug}) }}"><img
-                            src="{{ asset('uploads/images/'~app.developer.id~'/'~app.cover) }}"
-                            alt="Cover {{ app.title }}"/></a>
+                <a href="{{ path('application_show',{slug:application.slug}) }}"><img
+                            src="{{ asset('uploads/images/'~application.developer.id~'/'~application.cover) }}"
+                            alt="Cover {{ application.title }}"/></a>
             {% endif %}
         </div>
         <div class="card-title">
-            <h4><a class="card-link" href="{{ path('app_show',{slug:app.slug}) }}"> {{ app.title }}</a>
-                {% for executable in app.executables %}
+            <h4><a class="card-link" href="{{ path('application_show',{slug:application.slug}) }}"> {{ application.title }}</a>
+                {% for executable in application.executables %}
                     {% if executable.platform == 'Windows' %}
                         <i class="fab fa-windows"></i>
                     {% elseif executable.platform == "Mac" %}
@@ -30,7 +30,7 @@
                 {% endfor %}
             </h4>
         </div>
-        <p class="card-subtitle">{{ app.shortDescription }}</p>
+        <p class="card-subtitle">{{ application.shortDescription }}</p>
     {% endfor %}
 
 {% endblock %}

@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20200916012403 extends AbstractMigration
+final class Version20200918131638 extends AbstractMigration
 {
     public function getDescription() : string
     {
@@ -20,12 +20,12 @@ final class Version20200916012403 extends AbstractMigration
     public function up(Schema $schema) : void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE genre ADD tag VARCHAR(255) NOT NULL');
+        $this->addSql('DROP INDEX views ON app');
     }
 
     public function down(Schema $schema) : void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE genre DROP tag');
+        $this->addSql('CREATE UNIQUE INDEX views ON app (views)');
     }
 }

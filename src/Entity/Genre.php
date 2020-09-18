@@ -3,10 +3,14 @@
 namespace App\Entity;
 
 use App\Repository\GenreRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=GenreRepository::class)
+ * @UniqueEntity("tag")
  */
 class Genre
 {
@@ -36,6 +40,16 @@ class Genre
      * @ORM\Column(type="string", length=255)
      */
     private $tag;
+
+    /**
+     * @ORM\OneToMany(targetEntity=App::class, mappedBy="genre")
+     */
+    private $apps;
+
+    public function __construct()
+    {
+        $this->apps = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -80,7 +94,7 @@ class Genre
 
     public function __toString()
     {
-      return (string) $this->tag;
+      return (string) $this->id;
     }
 
     public function getTag(): ?string
@@ -91,6 +105,37 @@ class Genre
     public function setTag(string $tag): self
     {
         $this->tag = $tag;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|App[]
+     */
+    public function getApps(): Collection
+    {
+        return $this->apps;
+    }
+
+    public function addApp(App $app): self
+    {
+        if (!$this->apps->contains($app)) {
+            $this->apps[] = $app;
+            $app->setGenre($this);
+        }
+
+        return $this;
+    }
+
+    public function removeApp(App $app): self
+    {
+        if ($this->apps->contains($app)) {
+            $this->apps->removeElement($app);
+            // set the owning side to null (unless already changed)
+            if ($app->getGenre() === $this) {
+                $app->setGenre(null);
+            }
+        }
 
         return $this;
     }

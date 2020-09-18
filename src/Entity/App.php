@@ -6,8 +6,8 @@ use App\Repository\AppRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
@@ -52,11 +52,9 @@ class App
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\File
      */
     private $cover;
 
-    
 
     /**
      * @ORM\OneToMany(targetEntity=Screenshot::class, mappedBy="app")
@@ -91,29 +89,22 @@ class App
     private $createdAt;
 
     /**
-     * @ORM\Column(type="string", length=191, unique=true)
+     * @ORM\Column(type="string", length=191, unique=true,)
      * @Assert\Length(min=1, max=191)
+     * @Assert\Regex("#^[a-z0-9-]+$#")
      * @Assert\NotBlank()
      */
     private $slug;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\Length(min=3, max=255)
-     * @Assert\NotBlank()
-     */
-    private $classification;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\Length(min=3, max=255)
-     * @Assert\NotBlank()
+     * @ORM\ManyToOne(targetEntity=Genre::class, inversedBy="apps")
      */
     private $genre;
 
-
-
-
+    /**
+     * @ORM\ManyToOne(targetEntity=Classification::class, inversedBy="apps")
+     */
+    private $classification;
 
 
 
@@ -193,7 +184,6 @@ class App
 
         return $this;
     }
-
 
 
     /**
@@ -290,7 +280,6 @@ class App
     }
 
 
-
     public function getDeveloper(): ?Developer
     {
         return $this->developer;
@@ -346,28 +335,29 @@ class App
         }
     }
 
-    public function getClassification(): ?string
+    public function getGenre(): ?Genre
+    {
+        return $this->genre;
+    }
+
+    public function setGenre(?Genre $genre): self
+    {
+        $this->genre = $genre;
+
+        return $this;
+    }
+
+    public function getClassification(): ?Classification
     {
         return $this->classification;
     }
 
-    public function setClassification(string $classification): self
+    public function setClassification(?Classification $classification): self
     {
         $this->classification = $classification;
 
         return $this;
     }
 
-    public function getGenre(): ?string
-    {
-        return $this->genre;
-    }
-
-    public function setGenre(string $genre): self
-    {
-        $this->genre = $genre;
-
-        return $this;
-    }
 
 }

@@ -14,7 +14,7 @@ class HomeController extends AbstractController
     public function index(AppRepository $appRepository)
     {
         return $this->render('home/index.html.twig', [
-            'apps' => $appRepository->findAll(),
+            'applications' => $appRepository->findAll(),
             'controller_name' => 'HomeController'
         ]);
 

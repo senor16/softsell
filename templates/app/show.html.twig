@@ -1,31 +1,35 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ app.title }} par {{ app.developer.pseudo }}{% endblock %}
+{% block title %}{{ application.title }} par {{ application.developer.pseudo }}{% endblock %}
 
 {% block body %}
-    {% if (app.cover == '-') %}
-        <p><a href="https://via.placeholder.com/800x400"> <img src="https://via.placeholder.com/800x400" alt="cover"/></a></p>
+    {% if (application.cover == '-') %}
+        <p><a href="https://via.placeholder.com/800x400"> <img src="https://via.placeholder.com/800x400"
+                                                               alt="cover"/></a></p>
     {% else %}
-        <a href="{{ asset('uploads/images/'~app.developer.id~'/'~app.cover) }}"> <img
-                    src="{{ asset('uploads/images/'~app.developer.id~'/'~app.cover) }}" alt="cover"/></a>
+        <p><a href="{{ asset('uploads/images/'~application.developer.id~'/'~application.cover) }}"> <img
+                        src="{{ asset('uploads/images/'~application.developer.id~'/'~application.cover) }}"
+                        alt="cover"/></a></p>
     {% endif %}
     <div class="row">
         <div class="col-7">
-            <h2>{{ app }}</h2>
-            <p>{{ app.shortDescription }}<br/>
-            Publié le {{ app.createdAt|format_datetime('medium', 'short', locale='fr') }}
+            <h2>{{ application }}</h2>
+            <p>{{ application.shortDescription }}<br/>
+                Cathégorie : {{ application.genre.fr }}<br/>
+                Publié le {{ application.createdAt|format_datetime('medium', 'short', locale='fr') }}
             </p>
-            <h5>Autheur : {{ app.developer.firstName ~' '~ app.developer.lastName ~' ('~ app.developer.email ~')' }}</h5>
-            <p><h4>Description :</h4>{{ app.description }}</p>
-            {% if app.executables|length >0 %}
+            <h5>Autheur
+                : {{ application.developer.firstName ~' '~ application.developer.lastName }} <small>({{  application.developer.email }})</small> </h5>
+            <p><h4>Description :</h4>{{ application.description }}</p>
+            {% if application.executables|length >0 %}
                 <h3><i class="fas fa-download"></i> Télécharger </h3>
-                {% for executable in app.executables %}
-                    <a href="{{ asset('uploads/files/'~app.developer.id~'/'~executable.filename) }}">{{ app.title }}
+                {% for executable in application.executables %}
+                    <a href="{{ asset('uploads/files/'~application.developer.id~'/'~executable.filename) }}">{{ application.title }}
                         ({{ executable.platform }}) </a> : {{ executable.showSize }}
                     {% if executable.platform == 'Windows' %}
                         <i class="fab fa-windows"></i>
                     {% elseif executable.platform == "Mac" %}
-                        <i class="fab fa-apple"></i>
+                        <i class="fab fa-applicationle"></i>
                     {% elseif executable.platform == "Linux" %}
                         <i class="fab fa-linux"></i>
                     {% elseif executable.platform == "Android" %}
@@ -36,25 +40,28 @@
             {% endif %}
             <p></p>
             <div>
-                <h3><b>
+                <h3 id="comments"></i>
                         {% if comments|length == 1 %}
                             Commentaire
                         {% else %}
                             Commentaires
                         {% endif %}
-                    </b></h3>
+                        <small>({{ comments|length }})</small>
+                    </h3>
             </div>
             {% if comments|length > 0 %}
                 {% for comment in comments %}
-                    <h5>{{ comment.author }} ({{ comment.email }})</h5>
-                    <small>Posté le {{ comment.createdAt|format_datetime('medium', 'short', locale='fr') }}</small>
-                    <p>{{ comment.text }}</p>
+
+                        <h5>{{ comment.author }} <small>({{ comment.email }})</small></h5>
+                        <small>Posté le {{ comment.createdAt|format_datetime('medium', 'short', locale='fr') }}</small>
+                        <p>{{ comment.text }}</p>
+
                 {% endfor %}
                 {% if previous >= 0 %}
-                    <a href="{{ path('app_show', {slug:app.slug, offset:previous}) }}">Précédent</a>
+                    <a href="{{ path('application_show', {slug:application.slug, offset:previous}) }}">Précédent</a>
                 {% endif %}
                 {% if next < comments|length %}
-                    <a href="{{ path('app_show', {slug:app.slug, offset:next}) }}">Suivant</a>
+                    <a href="{{ path('application_show', {slug:application.slug, offset:next}) }}">Suivant</a>
                 {% endif %}
             {% else %}
                 <div>Aucun commentaire n'a été publiée.</div>
@@ -63,7 +70,7 @@
             {{ form_start(comment_form) }}
             {{ form_row(comment_form.text, {
                 'label' : 'Votre commentaire',
-                 'attr' : {
+                'attr' : {
                     'placeholder' : 'Tapez votre commentaire'
                 }
             }) }}
@@ -71,20 +78,23 @@
             {{ form_end(comment_form) }}
         </div>
         <div class="col-5">
-            {% if app.screenshots|length > 0 %}
+            {% if application.screenshots|length > 0 %}
                 <h4>Captures d'écran</h4>
-                {% for screenshot in app.screenshots %}
+                {% for screenshot in application.screenshots %}
                     {% if screenshot.filename == '-' %}
-                        <p><a href="https://via.placeholder.com/350x250"> <img src="https://via.placeholder.com/350x250" alt="Screenshots"/></a></p>
+                        <p><a href="https://via.placeholder.com/350x250"> <img src="https://via.placeholder.com/350x250"
+                                                                               alt="Screenshots"/></a></p>
                     {% else %}
-                        <p><a href="{{ asset('uploads/images/'~app.developer.id~'/'~screenshot.filename) }}"> <img
-                                        src="{{ asset('uploads/images/'~app.developer.id~'/'~screenshot.filename) }}"
+                        <p><a href="{{ asset('uploads/images/'~application.developer.id~'/'~screenshot.filename) }}">
+                                <img
+                                        src="{{ asset('uploads/images/'~application.developer.id~'/'~screenshot.filename) }}"
                                         alt="Screenshot "/></a></p>
                     {% endif %}
                 {% endfor %}
             {% else %}
                 {% for i in 1..5 %}
-                    <p><a href="https://via.placeholder.com/350x250"> <img src="https://via.placeholder.com/350x250" alt="Screenshots {{ i }}"/></a></p>
+                    <p><a href="https://via.placeholder.com/350x250"> <img src="https://via.placeholder.com/350x250"
+                                                                           alt="Screenshots {{ i }}"/></a></p>
                 {% endfor %}
             {% endif %}
         </div>

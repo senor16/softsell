@@ -24,20 +24,20 @@ class AppFormType extends AbstractType
             ->add('short_description')
             ->add('description')
             ->add(
-                'cover',
-                FileType::class,
-                [
-                    'constraints' => [
-                        new Image(['maxSize' => '2048k']),
-                    ],
-                ]
+                'cover'
+//                FileType::class,
+//                [
+//                    'constraints' => [
+//                        new Image(['maxSize' => '2048k']),
+//                    ],
+//                ]
             )
             ->add(
                 'classification',
                 EntityType::class,
                 [
                     'class' => Classification::class,
-                    'choice_value' => 'getTag',
+                    'choice_value' => 'getId',
                     'choice_label' => 'getFr',
                 ]
             )
@@ -46,8 +46,8 @@ class AppFormType extends AbstractType
                 EntityType::class,
                 [
                     'class' => Genre::class,
+                    'choice_value' => 'getId',
                     'choice_label' => 'getFr',
-                    'choice_value' => 'getTag',
                 ]
             );
     }

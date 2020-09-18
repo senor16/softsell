@@ -29,70 +29,81 @@ class AppController extends AbstractController
     }
 
     /**
-     * @Route("/app", name="app")
+     * @Route("/app", name="application")
      */
     public function index(AppRepository $appRepository)
     {
         return new Response(
             $this->twig->render(
                 'app/index.html.twig',
-                ['apps' => $appRepository->findAll(),]
+                ['applications' => $appRepository->findAll(),]
             )
         );
     }
 
     /**
-     * @Route("/new", name="app_new")
-     * @Route("/{slug}/edit" ,name="app_edit" ,priority=-10)
+     * @Route("/new", name="application_new")
+     * @Route("/{slug}/edit" ,name="application_edit" ,priority=-10)
      */
-    public function form(App $app = null, Request $request, string $imageDir)
+    public function form(App $application = null, Request $request, string $imageDir)
     {
-        if (!$app) {
-            $app = new App();
+        if (!$application) {
+            $application = new App();
         }
-        $form = $this->createForm(AppFormType::class, $app);
+        $form = $this->createForm(AppFormType::class, $application);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if (!$app->getId()) {
-                $app->setCreatedAt(new \DateTime());
-            }
-            if($image = $form['cover']->getData()){
-                $filename = bin2hex(random_bytes(6)).'.'.$image->guessExtension();
-            }
-            $imageDir= $imageDir.'/'.$app->getDeveloper()->getId();
-            try {
-                mkdir($imageDir);
-            }catch (\Exception $e){}
-            try{
-                $image->move($imageDir, $filename);
-            }catch (FileException $e){}
-            $app->setCover($filename);
-            $app->setPrice(0);
-            $app->setViews(0);
 
-            $this->entityManager->persist($app);
+            if (!$application->getId()) {
+                $application->setCreatedAt(new \DateTime());
+            }
+            if(!$application){
+                if ($image = $form['cover']->getData()) {
+                    $filename = bin2hex(random_bytes(6)).'.'.$image->guessExtension();
+                }
+
+                $imageDir = $imageDir.'/'.$application->getDeveloper()->getId();
+
+                try {
+                    mkdir($imageDir);
+                } catch (\Exception $e) {
+                }
+
+                try {
+                    $image->move($imageDir, $filename);
+                } catch (FileException $e) {
+                }
+
+                $application->setCover($filename);
+            }
+            $application->setCover($form['cover']->getData());
+            $application->setPrice(0);
+            $application->setViews(0);
+
+            $this->entityManager->persist($application);
             $this->entityManager->flush();
 
-            return $this->redirectToRoute('app_show', ['slug' => $app->getSlug()]);
+            return $this->redirectToRoute('application_show', ['slug' => $application->getSlug()]);
         }
 
         return new Response(
             $this->twig->render(
                 'app/upload.html.twig',
                 [
-                    'app_form' => $form->createView(),
-                    'edit_mode'=>$app->getId()!==null,
+                    'application_form' => $form->createView(),
+                    'edit_mode' => $application->getId() !== null,
                 ]
             )
         );
     }
 
     /**
-     * @Route("/{slug}", name="app_show")
+     * @Route("/{slug}", name="application_show")
+     * @Route("/{slug}", name="comment_show")
      */
-    public function show(Request $request, App $app, CommentRepository $commentRepository)
+    public function show(Request $request, App $application, CommentRepository $commentRepository)
     {
 
         $comment = new Comment();
@@ -101,23 +112,24 @@ class AppController extends AbstractController
 
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $comment->setApp($app);
-            $comment->setAuthor('Yaya Bar');
-            $comment->setEmail('yaya@gmail.com');
+            $comment->setApp($application);
+            $comment->setAuthor('Capi ar');
+            $comment->setEmail('capili@gmail.com');
             $comment->setCreatedAtValue();
             $this->entityManager->persist($comment);
             $this->entityManager->flush();
 
-            return $this->redirectToRoute('app_show', ['slug' => $app->getSlug()]);
+
+            return $this->redirectToRoute('comment_show', ['slug' => $application->getSlug()]);
         }
         $offset = max(0, $request->query->getInt('offset', 0));
-        $paginator = $commentRepository->getCommentPAginator($app, $offset);
+        $paginator = $commentRepository->getCommentPAginator($application, $offset);
 
         return new Response(
             $this->twig->render(
                 'app/show.html.twig',
                 [
-                    'app' => $app,
+                    'application' => $application,
                     'comments' => $paginator,
                     'previous' => $offset - CommentRepository::PAGINATOR_PER_PAGE,
                     'next' => min(count($paginator), $offset + CommentRepository::PAGINATOR_PER_PAGE),
