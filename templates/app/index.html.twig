@@ -3,31 +3,37 @@
 {% block title %}Apps{% endblock %}
 
 {% block body %}
-    {% for application in applications %}
-        <div class="card-columns">
-            {% if application.cover == '-' %}
-                <p><a href="https://via.placeholder.com/250x150"> <img src="https://via.placeholder.com/250x150" alt="cover"/></a></p>
-            {% else %}
-                <a href="{{ path('application_show',{slug:application.slug}) }}"><img
-                            src="{{ asset('uploads/images/'~application.developer.id~'/'~application.cover) }}"
-                            alt="Cover {{ application.title }}"/></a>
-            {% endif %}
-        </div>
-        <div class="card-title">
-            <h4><a class="card-link" href="{{ path('application_show',{slug:application.slug}) }}"> {{ application.title }}</a>
-                {% for executable in application.executables %}
-                    {% if executable.platform == 'Windows' %}
-                        <i class="fab fa-windows"></i>
-                    {% elseif executable.platform == "Mac" %}
-                        <i class="fab fa-apple"></i>
-                    {% elseif executable.platform == "Linux" %}
-                        <i class="fab fa-linux"></i>
-                    {% elseif executable.platform == "Android" %}
-                        <i class="fab fa-Android"></i>
+    <div class="row">
+        {% for application in applications %}
+            <div class="col-3">
+                <div class="card-columns">
+                    {% if application.cover == '-' %}
+                        <p><a href="{{ path('application_show',{slug:application.slug}) }}"> <img
+                                        src="https://via.placeholder.com/250x150" alt="cover"/></a></p>
+                    {% else %}
+                        <a href="{{ path('application_show',{slug:application.slug}) }}"><img
+                                    src="{{ asset('uploads/images/'~application.developer.id~'/'~application.cover) }}"
+                                    alt="Cover {{ application.title }}"/></a>
                     {% endif %}
-                {% endfor %}
-            </h4>
-        </div>
-        <p class="card-subtitle">{{ application.shortDescription }}</p>
-    {% endfor %}
+                </div>
+                <div class="card-title">
+                    <h4><a class="card-link"
+                           href="{{ path('application_show',{slug:application.slug}) }}"> {{ application.title }}</a>
+                        {% for executable in application.executables %}
+                            {% if executable.platform == 'Windows' %}
+                                <i class="fab fa-windows"></i>
+                            {% elseif executable.platform == "Mac" %}
+                                <i class="fab fa-apple"></i>
+                            {% elseif executable.platform == "Linux" %}
+                                <i class="fab fa-linux"></i>
+                            {% elseif executable.platform == "Android" %}
+                                <i class="fab fa-Android"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </h4>
+                </div>
+                <p class="card-subtitle">{{ application.shortDescription }}</p>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}

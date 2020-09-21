@@ -41,9 +41,15 @@ class Classification
      */
     private $apps;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Genre::class, mappedBy="classification")
+     */
+    private $genre;
+
     public function __construct()
     {
         $this->apps = new ArrayCollection();
+        $this->genre = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -117,6 +123,37 @@ class Classification
             // set the owning side to null (unless already changed)
             if ($app->getClassification() === $this) {
                 $app->setClassification(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Genre[]
+     */
+    public function getGenre(): Collection
+    {
+        return $this->genre;
+    }
+
+    public function addGenre(Genre $genre): self
+    {
+        if (!$this->genre->contains($genre)) {
+            $this->genre[] = $genre;
+            $genre->setClassification($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGenre(Genre $genre): self
+    {
+        if ($this->genre->contains($genre)) {
+            $this->genre->removeElement($genre);
+            // set the owning side to null (unless already changed)
+            if ($genre->getClassification() === $this) {
+                $genre->setClassification(null);
             }
         }
 

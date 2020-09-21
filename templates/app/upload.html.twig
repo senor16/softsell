@@ -1,72 +1,85 @@
 {% extends 'base.html.twig' %}
-{% form_theme application_form 'bootstrap_4_layout.html.twig' %}
+{#{% form_theme application_form 'bootstrap_4_layout.html.twig' %}#}
 {% block title %}
     {% if(edit_mode) %}
-        Modification
+        Modifier les informations de l'application
     {% else %}
-        Ajout d'une nouvelle application
+        Ajouter une nouvelle application
     {% endif %}
 {% endblock %}
 {% block body %}
     <h1>
         {% if(edit_mode) %}
-            Modification
+            Modifier les informations de l'application
         {% else %}
-            Ajout d'une nouvelle application
+            Ajouter une nouvelle application
         {% endif %}
     </h1>
+
     {{ form_start (application_form) }}
+    <div class="row">
+        <div class="col-7">
+            {{ form_row(application_form.title, {
+                'attr': {
+                    'placeholder':'Titre de l\'application',
+                    'autofocus':'autofocus',
+                }
+            }) }}
 
-    {{ form_row(application_form.title, {
-        'attr': {
-            'placeholder':'Titre de l\'application',
-            'autofocus':'autofocus'
-        }
-    }) }}
+            {{ form_row(application_form.slug, {
+                'label':'Reférence',
+                'attr': {
+                    'placeholder':'Reférence de l\'application',
+                }
+            }) }}
 
-    {{ form_row(application_form.slug, {
-        'label':'Reférence',
-        'attr': {
-            'placeholder':'Reférence de l\'application'
-        }
-    }) }}
+            {{ form_row(application_form.short_description, {
+                'label':'Brève description',
+                'attr': {
+                    'placeholder':'Courte description de l\'application',
+                }
+            }) }}
 
-    {{ form_row(application_form.short_description, {
-        'label':'Brève description',
-        'attr': {
-            'placeholder':'Courte description de l\'application'
-        }
-    }) }}
+            {{ form_row(application_form.description, {
+                'label':'Description',
+                'attr': {
+                    'placeholder':'Description détaillée'
+                }
+            }) }}
 
-    {{ form_row(application_form.description, {
-        'label':'Description',
-        'attr': {
-            'placeholder':'Description détaillée'
-        }
-    }) }}
+            {{ form_row(application_form.classification) }}
 
-    {{ form_row(application_form.cover, {
-        'label':'Couverture',
-        'attr': {
-            'placeholder':'Image de couverture'
-        }
-    }) }}
+            {% if application_form.genre is defined %}
+                {{ form_row(application_form.genre) }}
+            {% endif %}
 
 
-    {{ form_row(application_form.classification) }}
+            {{ form_row(application_form.developer) }}
 
-    {{ form_row(application_form.genre) }}
+            <button type="submit" class="btn btn-success">
+                {% if (edit_mode) %}
+                    Enregistrer
+                {% else %}
+                    Ajouter l'application
+                {% endif %}
+            </button>
+        </div>
+        <div class="col">
+                            {{ form_row(application_form.coverFile, {
+                                'label':'Image de couverture'
+                            }) }}
 
-    {{ form_row(application_form.developer) }}
+            {#                {{ form_row(application_form.screenshots) }}#}
 
-    <button type="submit" class="btn btn-success">
-        {% if (edit_mode) %}
-            Enregistrer
-        {% else %}
-            Ajouter l'application
-        {% endif %}
-    </button>
+
+        </div>
+    </div>
     {{ form_end(application_form) }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/description-prefill.js') }}"></script>
+    <script src="{{ asset('js/app.js') }}"></script>
 {% endblock %}
 
 

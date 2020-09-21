@@ -31,10 +31,6 @@ class Genre
      */
     private $en;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $is_game;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -45,6 +41,11 @@ class Genre
      * @ORM\OneToMany(targetEntity=App::class, mappedBy="genre")
      */
     private $apps;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Classification::class, inversedBy="genre")
+     */
+    private $classification;
 
     public function __construct()
     {
@@ -80,17 +81,6 @@ class Genre
         return $this;
     }
 
-    public function getIsGame(): ?bool
-    {
-        return $this->is_game;
-    }
-
-    public function setIsGame(bool $is_game): self
-    {
-        $this->is_game = $is_game;
-
-        return $this;
-    }
 
     public function __toString()
     {
@@ -136,6 +126,18 @@ class Genre
                 $app->setGenre(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getClassification(): ?Classification
+    {
+        return $this->classification;
+    }
+
+    public function setClassification(?Classification $classification): self
+    {
+        $this->classification = $classification;
 
         return $this;
     }

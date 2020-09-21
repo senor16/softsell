@@ -4,13 +4,14 @@ namespace App\Controller;
 
 use App\Entity\App;
 use App\Entity\Comment;
+use App\Entity\Screenshot;
 use App\Form\AppFormType;
 use App\Form\CommentFormType;
+use App\Form\ScreenshotFormType;
 use App\Repository\AppRepository;
 use App\Repository\CommentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -45,48 +46,32 @@ class AppController extends AbstractController
      * @Route("/new", name="application_new")
      * @Route("/{slug}/edit" ,name="application_edit" ,priority=-10)
      */
-    public function form(App $application = null, Request $request, string $imageDir)
+    public function form(App $application = null,  Request $request, string $imageDir)
     {
         if (!$application) {
             $application = new App();
         }
-        $form = $this->createForm(AppFormType::class, $application);
 
-        $form->handleRequest($request);
+        $form = $this->createForm(AppFormType::class, $application);
+            $form->handleRequest($request);
+
+
 
         if ($form->isSubmitted() && $form->isValid()) {
 
             if (!$application->getId()) {
                 $application->setCreatedAt(new \DateTime());
             }
-            if(!$application){
-                if ($image = $form['cover']->getData()) {
-                    $filename = bin2hex(random_bytes(6)).'.'.$image->guessExtension();
-                }
-
-                $imageDir = $imageDir.'/'.$application->getDeveloper()->getId();
-
-                try {
-                    mkdir($imageDir);
-                } catch (\Exception $e) {
-                }
-
-                try {
-                    $image->move($imageDir, $filename);
-                } catch (FileException $e) {
-                }
-
-                $application->setCover($filename);
-            }
-            $application->setCover($form['cover']->getData());
             $application->setPrice(0);
             $application->setViews(0);
 
             $this->entityManager->persist($application);
             $this->entityManager->flush();
 
+
             return $this->redirectToRoute('application_show', ['slug' => $application->getSlug()]);
         }
+
 
         return new Response(
             $this->twig->render(

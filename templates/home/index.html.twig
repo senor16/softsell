@@ -8,7 +8,7 @@
     {% for application in applications %}
         <div class="card-columns">
             {% if application.cover == '-' %}
-                <p><a href="https://via.placeholder.com/250x150"> <img src="https://via.placeholder.com/250x150" alt="cover"/></a></p>
+                <p><a href="{{ path('application_show',{slug:application.slug}) }}"> <img src="https://via.placeholder.com/250x150" alt="cover"/></a></p>
             {% else %}
                 <a href="{{ path('application_show',{slug:application.slug}) }}"><img
                             src="{{ asset('uploads/images/'~application.developer.id~'/'~application.cover) }}"
