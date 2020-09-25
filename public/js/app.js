@@ -1,5 +1,5 @@
 
-$(document).on('change', '#app_form_classification, #app_form_genre', function () {
+$(document).on('change', '#app_form_classification', function () {
     let $field = $(this)
     let $form = $field.closest('form')
     let data = {}

@@ -46,18 +46,18 @@ class AppController extends AbstractController
      * @Route("/new", name="application_new")
      * @Route("/{slug}/edit" ,name="application_edit" ,priority=-10)
      */
-    public function form(App $application = null,  Request $request, string $imageDir)
+    public function form(App $application = null, Request $request)
     {
         if (!$application) {
             $application = new App();
         }
 
         $form = $this->createForm(AppFormType::class, $application);
-            $form->handleRequest($request);
-
+        $form->handleRequest($request);
 
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $screenshots = $form->get('screenshotsFile')->getData();
 
             if (!$application->getId()) {
                 $application->setCreatedAt(new \DateTime());
@@ -68,10 +68,32 @@ class AppController extends AbstractController
             $this->entityManager->persist($application);
             $this->entityManager->flush();
 
+            $destination = $this->getParameter('screenshots_directory').'/'.$form->get('developer')->getData()->getId(). '/'.$application->getId();
+            try {mkdir($destination);} catch (\Exception $e) {}
+
+            foreach ($screenshots as $screenshot) {
+                $filename = bin2hex(random_bytes(12)).'.'.$screenshot->guessExtension();
+//                $destination = $this->getParameter('screenshots_directory').'/'.$form->get('developer')->getData()->getId();
+
+                try {
+                    $screenshot->move($destination, $filename);
+                } catch (\Exception $e) {}
+
+                $screen = new Screenshot();
+                $screen->setFilename($filename);
+                $screen->setUpdatedAt(new \DateTime());
+
+                $application->addScreenshot($screen);
+            }
+
+
+            $this->entityManager->persist($application);
+            $this->entityManager->flush();
+
+
 
             return $this->redirectToRoute('application_show', ['slug' => $application->getSlug()]);
         }
-
 
         return new Response(
             $this->twig->render(
@@ -82,11 +104,13 @@ class AppController extends AbstractController
                 ]
             )
         );
+
+
     }
 
     /**
      * @Route("/{slug}", name="application_show")
-     * @Route("/{slug}", name="comment_show")
+     * @Route("/{slug}" , name="comment_show" ,defaults={"_fragment": "comments"})
      */
     public function show(Request $request, App $application, CommentRepository $commentRepository)
     {

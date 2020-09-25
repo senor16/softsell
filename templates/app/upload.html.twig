@@ -18,7 +18,7 @@
 
     {{ form_start (application_form) }}
     <div class="row">
-        <div class="col-7">
+        <div class="col">
             {{ form_row(application_form.title, {
                 'attr': {
                     'placeholder':'Titre de l\'application',
@@ -60,25 +60,27 @@
                 {% if (edit_mode) %}
                     Enregistrer
                 {% else %}
-                    Ajouter l'application
+                    Suivant
                 {% endif %}
             </button>
+            <p></p>
         </div>
-        <div class="col">
-                            {{ form_row(application_form.coverFile, {
-                                'label':'Image de couverture'
-                            }) }}
 
-            {#                {{ form_row(application_form.screenshots) }}#}
+        <div class="col-4">
+            {{ form_row(application_form.coverFile, {
+                'label':'Image de couverture'
+            }) }}
 
-
+            {{ form_row(application_form.screenshotsFile, {
+                'label':'Captures d\'écran'
+            }) }}
         </div>
+
     </div>
     {{ form_end(application_form) }}
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
-    <script src="{{ asset('js/description-prefill.js') }}"></script>
     <script src="{{ asset('js/app.js') }}"></script>
 {% endblock %}
 

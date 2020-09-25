@@ -7,6 +7,8 @@ use App\Entity\Classification;
 use App\Entity\Genre;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -25,6 +27,10 @@ class AppFormType extends AbstractType
             ->add('developer')
             ->add('short_description')
             ->add('description')
+            ->add('platform', CheckboxType::class,[
+                'mapped'=>false,
+                'label'=>'Plateforme supportées : ',
+            ])
             ->add(
                 'coverFile',
                 VichImageType::class,
@@ -37,26 +43,26 @@ class AppFormType extends AbstractType
                     'asset_helper' => true,
                 ]
             )
-//            ->add('screenshots', CollectionType::class)
+            ->add(
+                'screenshotsFile',
+                FileType::class,
+                [
+                    'multiple' => true,
+                    'required' => false,
+                    'mapped' => false,
+                ]
+            )
             ->add(
                 'classification',
                 EntityType::class,
                 [
-                    'placeholder'=>'Choississez une classification',
+                    'placeholder' => 'Choississez une classification',
                     'class' => Classification::class,
                     'choice_value' => 'getId',
                     'choice_label' => 'getFr',
                 ]
             );
-//            ->add(
-//                'genre',
-//                EntityType::class,
-//                [
-//                    'class' => Genre::class,
-//                    'choice_value' => 'getId',
-//                    'choice_label' => 'getFr',
-//                ]
-//            );
+
         $builder->get('classification')->addEventListener(
             FormEvents::POST_SUBMIT,
             function (FormEvent $event) {
@@ -97,7 +103,7 @@ class AppFormType extends AbstractType
             'genre',
             EntityType::class,
             [
-                'placeholder'=> $classification ?'Choississez un genre' : 'Vous devez d\'abord choisir une classification',
+                'placeholder' => $classification ? 'Choississez un genre' : 'Vous devez d\'abord choisir une classification',
                 'class' => Genre::class,
                 'choice_value' => 'getId',
                 'choice_label' => 'getFr',

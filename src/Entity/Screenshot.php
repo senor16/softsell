@@ -20,11 +20,7 @@ class Screenshot
      */
     private $id;
 
-    /**
-     * @Vich\UploadableField(mapping="application_images_upload", fileNameProperty="filename")
-     * @var string|null
-     */
-    private $file;
+
 
     /**
      * @ORM\Column(type="datetime")
@@ -61,22 +57,6 @@ class Screenshot
     }
 
 
-    public function getFile(): ?string
-    {
-        return $this->file;
-    }
-
-    /**
-     * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile|null
-     */
-    public function setFile(?string $file): void
-    {
-        $this->file = $file;
-
-        if(null !== $file){
-            $this->updatedAt = new \DateTimeImmutable();
-        }
-    }
 
     public function getUpdatedAt()
     {

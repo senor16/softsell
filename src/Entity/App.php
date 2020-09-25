@@ -61,11 +61,6 @@ class App
      */
     private $coverFile;
 
-
-
-
-
-
     /**
      * @ORM\Column(type="string", length=255)
      * @var string|null
@@ -79,9 +74,11 @@ class App
     private $updatedAt;
 
     /**
-     * @ORM\OneToMany(targetEntity=Screenshot::class, mappedBy="app")
+     * @ORM\OneToMany(targetEntity=Screenshot::class, mappedBy="app", cascade={"persist"})
      */
     private $screenshots;
+
+
 
     /**
      * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="app", orphanRemoval=true)
@@ -202,8 +199,6 @@ class App
     public function getCoverFile(): ?File
     {
         return $this->coverFile;
-
-
     }
 
     /**
