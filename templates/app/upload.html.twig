@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-{#{% form_theme application_form 'bootstrap_4_layout.html.twig' %}#}
+{% form_theme application_form 'bootstrap_4_layout.html.twig' %}
 {% block title %}
     {% if(edit_mode) %}
         Modifier les informations de l'application
@@ -21,8 +21,7 @@
         <div class="col">
             {{ form_row(application_form.title, {
                 'attr': {
-                    'placeholder':'Titre de l\'application',
-                    'autofocus':'autofocus',
+                    'placeholder':'Titre de l\'application'
                 }
             }) }}
 
@@ -43,26 +42,159 @@
             {{ form_row(application_form.description, {
                 'label':'Description',
                 'attr': {
-                    'placeholder':'Description détaillée'
+                    'placeholder':'Description détaillée',
+                    'rows':10
                 }
             }) }}
 
             {{ form_row(application_form.classification) }}
 
-            {% if application_form.genre is defined %}
-                {{ form_row(application_form.genre) }}
-            {% endif %}
+            {{ form_row(application_form.genre) }}
+
+            <p>Plateformes supportées :</p>
+            <div class="row">
+                {% if edit_mode and application.executables|length > 0 %}
+                    {% set w ='' %}
+                    {% set l ='' %}
+                    {% set m ='' %}
+                    {% set a ='' %}
+                    {% for executable in application.executables %}
+                        {% if executable.platform == 'Windows' %}
+                            <div class="col">
+                                {{ form_row(application_form.windows, {'attr':{'checked':true}}) }}
+                            </div>
+                            {% set w = 'w' %}
+                        {% endif %}
+
+                        {% if executable.platform == "Mac" %}
+                            <div class="col">
+                                {{ form_row(application_form.mac, {'attr':{'checked':true}}) }}
+                            </div>
+                            {% set m = 'm' %}
+                        {% endif %}
 
 
+                        {% if executable.platform == "Linux" %}
+                            <div class="col">
+                                {{ form_row(application_form.linux, {'attr':{'checked':true}}) }}
+                            </div>
+                            {% set l = 'l' %}
+                        {% endif %}
+
+
+                        {% if executable.platform == "Android" %}
+                            <div class="col">
+                                {{ form_row(application_form.android, {'attr':{'checked':true}}) }}
+                            </div>
+                            {% set a = 'a' %}
+
+                        {% endif %}
+                    {% endfor %}
+
+
+
+                    {% if w != 'w' %}
+                        <div class="col">
+                            {{ form_row(application_form.windows) }}
+                        </div>
+                    {% endif %}
+                    {% if l != 'l' %}
+                        <div class="col">
+                            {{ form_row(application_form.linux) }}
+                        </div>
+                    {% endif %}
+                    {% if m != 'm' %}
+                        <div class="col">
+                            {{ form_row(application_form.mac) }}
+                        </div>
+                    {% endif %}
+                    {% if a != 'a' %}
+                        <div class="col">
+                            {{ form_row(application_form.android) }}
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="col">
+                        {{ form_row(application_form.windows) }}
+                    </div>
+                    <div class="col">
+                        {{ form_row(application_form.linux) }}
+                    </div>
+                    <div class="col">
+                        {{ form_row(application_form.mac) }}
+                    </div>
+                    <div class="col">
+                        {{ form_row(application_form.android) }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="form-group" id="form-windows">
+                {{ form_row(application_form.windowsFile) }}
+                {% for executable in application.executables %}
+                    {% if executable.platform == 'Windows' %}
+                        <div id="windows-exec">
+                            <a href="{{ asset('uploads/files/'~application.developer.id~'/'~executable.name) }}"><i
+                                        class="fab fa-windows" style="color: black;"></i> Télécharger
+                                ({{ executable.platform }}) </a> : {{ executable.showSize }}
+                            <a href="{{ path('application_delete_executable', {id : executable.id}) }}"
+                               style="color: red;" data-delete
+                               data-token="{{ csrf_token('executable'~executable.id) }}">Supprimer</a>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <div class="form-group" id="form-linux">
+                {{ form_row(application_form.linuxFile) }}
+                {% for executable in application.executables %}
+                    {% if executable.platform == 'Linux' %}
+                        <div id="linux-exec">
+                            <a href="{{ asset('uploads/files/'~application.developer.id~'/'~executable.name) }}"><i
+                                        class="fab fa-linux" style="color: black;"></i> Télécharger
+                                ({{ executable.platform }}) </a> : {{ executable.showSize }}
+                            <a href="{{ path('application_delete_executable', {id:executable.id}) }}"
+                               style="color: red;" data-delete
+                               data-token="{{ csrf_token('executable'~executable.id) }}">Supprimer</a>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="form-group" id="form-mac">
+                {{ form_row(application_form.macFile) }}
+                {% for executable in application.executables %}
+                    {% if executable.platform == 'Mac' %}
+                        <div id="mac-exec">
+                            <a href="{{ asset('uploads/files/'~application.developer.id~'/'~executable.name) }}"><i
+                                        class="fab fa-apple" style="color: black;"></i> Télécharger
+                                ({{ executable.platform }}) </a> : {{ executable.showSize }}
+                            <a href="{{ path('application_delete_executable', {id:executable.id}) }}"
+                               style="color: red;" data-delete
+                               data-token="{{ csrf_token('executable'~executable.id) }}">Supprimer</a>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="form-group" id="form-android">
+                {{ form_row(application_form.androidFile) }}
+                {% for executable in application.executables %}
+                    {% if executable.platform == 'Android' %}
+                        <div id="android-exec">
+                            <a href="{{ asset('uploads/files/'~application.developer.id~'/'~executable.name) }}"><i
+                                        class="fab fa-android" style="color: black;"></i> Télécharger
+                                ({{ executable.platform }}) </a> : {{ executable.showSize }}
+                            <a href="{{ path('application_delete_executable', {id:executable.id}) }}"
+                               style="color: red;" data-delete
+                               data-token="{{ csrf_token('executable'~executable.id) }}">Supprimer</a>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+
+            {{ form_row(application_form.isReleased,{'label':'Rendre l\'applicationvisible par tous'}) }}
             {{ form_row(application_form.developer) }}
 
-            <button type="submit" class="btn btn-success">
-                {% if (edit_mode) %}
-                    Enregistrer
-                {% else %}
-                    Suivant
-                {% endif %}
-            </button>
+            <button type="submit" class="btn btn-success">Enregistrer</button>
             <p></p>
         </div>
 
@@ -74,6 +206,33 @@
             {{ form_row(application_form.screenshotsFile, {
                 'label':'Captures d\'écran'
             }) }}
+
+            {% if  edit_mode %}
+                {% for screenshot in application.screenshots %}
+                    <p>
+                        {% if screenshot.filename == '-' %}
+                            <a href="https://via.placeholder.com/350x250"> <img
+                                        src="https://via.placeholder.com/350x250"
+                                        alt="Screenshots"/></a>
+
+                        {% else %}
+
+                            <a href="{{ asset('uploads/images/'~application.developer.id~'/'~application.id~'/'~screenshot.filename) }}">
+
+                                <img src="{{ asset('uploads/images/'~application.developer.id~'/'~application.id~'/'~screenshot.filename) }}"
+                                     alt="Screenshot {{ application.title }}"/>
+                            </a>
+                            <a href="{{ path('application_delete_screenshot', {id: screenshot.id}) }}"
+                               data-delete data-token="{{ csrf_token('screenshot'~screenshot.id) }}"
+                               style="color: red;">
+                                Supprimer</a>
+                            <a href="{{ asset('uploads/images/'~application.developer.id~'/'~application.id~'/'~screenshot.filename) }}"
+                               download>Télécharger</a>
+
+                        {% endif %}
+                    </p>
+                {% endfor %}
+            {% endif %}
         </div>
 
     </div>
@@ -82,6 +241,7 @@
 {% block javascripts %}
     {{ parent() }}
     <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('js/screenshots.js') }}"></script>
 {% endblock %}
 
 

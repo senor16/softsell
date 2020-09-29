@@ -5,11 +5,9 @@ namespace App\Entity;
 use App\Repository\ExecutableRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @ORM\Entity(repositoryClass=ExecutableRepository::class)
- * @Vich\Uploadable
  */
 class Executable
 {
@@ -20,11 +18,8 @@ class Executable
      */
     private $id;
 
-    /**
-     * @Vich\UploadableField(mapping="application_executables_upload", fileNameProperty="filename", size="size")
-     * @var string|null
-     */
-    private $file;
+
+
 
     /**
      * @ORM\Column(type="datetime")
@@ -34,7 +29,7 @@ class Executable
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $executablename;
+    private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -61,33 +56,16 @@ class Executable
         return $this->id;
     }
 
-    public function getExecutablename(): ?string
+    public function getName(): ?string
     {
-        return $this->executablename;
+        return $this->name;
     }
 
-    public function setExecutablename(string $executablename): self
+    public function setName(string $name): self
     {
-        $this->executablename = $executablename;
+        $this->name = $name;
 
         return $this;
-    }
-
-    public function getFile(): ?string
-    {
-        return $this->file;
-    }
-
-    /**
-     * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile|null
-     */
-    public function setFile(?string $file): void
-    {
-        $this->file = $file;
-
-        if(null !== $file){
-            $this->updatedAt = new \DateTimeImmutable();
-        }
     }
 
     public function getUpdatedAt()

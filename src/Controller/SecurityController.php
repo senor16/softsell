@@ -2,35 +2,111 @@
 
 namespace App\Controller;
 
+use App\Entity\Developer;
+use App\Entity\User;
+use App\Form\DeveloperRegistrationType;
+use App\Form\UserRegistrationType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Twig\Environment;
 
 class SecurityController extends AbstractController
 {
-    /**
-     * @Route("/easyadmin/login", name="app_login")
-     */
-    public function login(AuthenticationUtils $authenticationUtils): Response
+
+
+    private $entityManager;
+
+    private $twig;
+
+    public function __construct(Environment $twig, EntityManagerInterface $entityManager)
     {
-        // if ($this->getUser()) {
-        //     return $this->redirectToRoute('target_path');
-        // }
-
-        // get the login error if there is one
-        $error = $authenticationUtils->getLastAuthenticationError();
-        // last username entered by the user
-        $lastUsername = $authenticationUtils->getLastUsername();
-
-        return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
+        $this->twig = $twig;
+        $this->entityManager = $entityManager;
     }
 
     /**
-     * @Route("/easyadmin/logout", name="app_logout")
+     * @Route("/developer/sign-up", name="security_developer_sign_up")
+     */
+    public function form(Request $request, UserPasswordEncoderInterface $encoder)
+    {
+        $developer = new Developer();
+
+        $form = $this->createForm(DeveloperRegistrationType::class, $developer);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $hash = $encoder->encodePassword($developer, $developer->getPassword());
+            $developer->setAvatar('-');
+            $developer->setPassword($hash);
+
+
+            $developer->setCreatedAt(new \DateTime());
+            $this->entityManager->persist($developer);
+            $this->entityManager->flush();
+
+            $this->redirectToRoute('security_login',[
+                'username'=>$developer->getUsername(),
+            ]);
+        }
+
+        return $this->render(
+            'security/signup.html.twig',
+            [
+                'sign_up_form' => $form->createView(),
+                'is_classic_user'=>false,
+            ]
+        );
+
+    }
+
+    /**
+     * @Route("/log-in", name="security_login")
+     */
+    public function login()
+    {
+        return $this->render('security/login.html.twig');
+    }
+
+    /**
+     * @Route("/log-out", name="security_logout")
      */
     public function logout()
     {
-        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+    }
+
+    /**
+     * @Route("/sign-up", name="security_user_sign_up")
+     */
+    public function signup(Request $request, UserPasswordEncoderInterface $encoder)
+    {
+        $user = new User();
+
+        $form = $this->createForm(UserRegistrationType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+            $hash = $encoder->encodePassword($user, $user->getPassword());
+            $user->setPassword($hash);
+            $user->setAvatar('-');
+            $user->setCreatedAt(new \DateTime());
+
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+
+            $this->redirectToRoute('security_login',[
+                'username'=>$user->getUsername(),
+            ]);
+        }
+        return $this->render(
+            'security/signup.html.twig',
+            [
+                'sign_up_form' => $form->createView(),
+                'is_classic_user'=>true,
+            ]
+        );
     }
 }

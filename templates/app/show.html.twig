@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ application.title }} par {{ application.developer.pseudo }}{% endblock %}
+{% block title %}{{ application.title }} par {{ application.developer.username }}{% endblock %}
 
 {% block body %}
-    {% if (application.cover == '-') %}
-        <p><a href="https://via.placeholder.com/800x400"> <img src="https://via.placeholder.com/800x400"
+    {% if (application.cover is null or application.cover =='-') %}
+        <p><a href="https://via.placeholder.com/350x250"> <img src="https://via.placeholder.com/350x250"
                                                                alt="cover"/></a></p>
     {% else %}
         <p><a href="{{ asset('uploads/images/'~application.developer.id~'/'~application.cover) }}"> <img
@@ -12,7 +12,7 @@
                         alt="cover"/></a></p>
     {% endif %}
     <div class="row">
-        <div class="col-7">
+        <div class="col">
             <h2>{{ application }}</h2>
             <p>{{ application.shortDescription }}<br/>
                 Cathégorie : {{ application.genre.fr }}<br/>
@@ -25,38 +25,41 @@
             {% if application.executables|length >0 %}
                 <h3><i class="fas fa-download"></i> Télécharger </h3>
                 {% for executable in application.executables %}
-                    <a href="{{ asset('uploads/files/'~application.developer.id~'/'~executable.filename) }}">{{ application.title }}
+                    <a href="{{ asset('uploads/files/'~application.developer.id~'/'~executable.name) }}">{{ application.slug }}
+                        .{{ executable.name|split('.')|last }}
                         ({{ executable.platform }}) </a> : {{ executable.showSize }}
                     {% if executable.platform == 'Windows' %}
                         <i class="fab fa-windows"></i>
                     {% elseif executable.platform == "Mac" %}
-                        <i class="fab fa-applicationle"></i>
+                        <i class="fab fa-apple"></i>
                     {% elseif executable.platform == "Linux" %}
                         <i class="fab fa-linux"></i>
                     {% elseif executable.platform == "Android" %}
-                        <i class="fab fa-Android"></i>
+                        <i class="fab fa-android"></i>
                     {% endif %}
+                    <br/>
                 {% endfor %}
 
             {% endif %}
             <p></p>
             <div id="comments">
-                <h3 >
+                <h1>
                     {% if comments|length == 1 %}
                         Commentaire
                     {% else %}
                         Commentaires
                     {% endif %}
                     <small>({{ comments|length }})</small>
-                </h3>
+                </h1>
 
                 {% if comments|length > 0 %}
                     {% for comment in comments %}
-
-                        <h5>{{ comment.author }} <small>({{ comment.email }})</small></h5>
-                        <small>Posté le {{ comment.createdAt|format_datetime('medium', 'short', locale='fr') }}</small>
-                        <p>{{ comment.text }}</p>
-
+                        <p>
+                            {{ comment.author }} <small>({{ comment.email }})</small>
+                            <small>Posté
+                                le {{ comment.createdAt|format_datetime('medium', 'short', locale='fr') }}</small><br/>
+                            {{ comment.text }}
+                        </p>
                     {% endfor %}
                     {% if previous >= 0 %}
                         <a href="{{ path('application_show', {slug:application.slug, offset:previous}) }}">Précédent</a>
@@ -65,8 +68,9 @@
                         <a href="{{ path('application_show', {slug:application.slug, offset:next}) }}">Suivant</a>
                     {% endif %}
                 {% else %}
-                    <div>Aucun commentaire n'a été publiée.</div>
+                    <h3>Aucun commentaire n'a été publiée.</h3>
                 {% endif %}
+                {% if app.user %}
                 <h4>Ajouter un commentaire</h4>
                 {{ form_start(comment_form) }}
                 {{ form_row(comment_form.text, {
@@ -75,11 +79,19 @@
                         'placeholder' : 'Tapez votre commentaire'
                     }
                 }) }}
-                <button type="submit" class="btn btn-success">Envoyer</button>
+                    <div hidden>
+                        {{ form_row(comment_form.author,{'attr':{'value': app.user.firstName~' '~app.user.lastName}}) }}
+                        {{ form_row(comment_form.email,{'attr':{'value': app.user.email}}) }}
+                    </div>
+                    <button type="submit" class="btn btn-success">Envoyer</button>
                 {{ form_end(comment_form) }}
+                {% else %}
+
+                    <h2>Vous devez d'abort vous connecter afin de faire un commentaire</h2> <a href="{{ path('security_login') }}" class="btn btn-primary">Connexion</a>
+                {% endif %}
             </div>
         </div>
-        <div class="col-5">
+        <div class="col-4">
             {% if application.screenshots|length > 0 %}
                 <h4>Captures d'écran</h4>
                 {% for screenshot in application.screenshots %}
@@ -87,7 +99,8 @@
                         <p><a href="https://via.placeholder.com/350x250"> <img src="https://via.placeholder.com/350x250"
                                                                                alt="Screenshots"/></a></p>
                     {% else %}
-                        <p><a href="{{ asset('uploads/images/'~application.developer.id~'/'~application.id~'/'~screenshot.filename) }}">
+                        <p>
+                            <a href="{{ asset('uploads/images/'~application.developer.id~'/'~application.id~'/'~screenshot.filename) }}">
                                 <img
                                         src="{{ asset('uploads/images/'~application.developer.id~'/'~application.id~'/'~screenshot.filename) }}"
                                         alt="Screenshot {{ application.title }}"/></a></p>

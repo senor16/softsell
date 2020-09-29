@@ -27,10 +27,74 @@ class AppFormType extends AbstractType
             ->add('developer')
             ->add('short_description')
             ->add('description')
-            ->add('platform', CheckboxType::class,[
-                'mapped'=>false,
-                'label'=>'Plateforme supportées : ',
-            ])
+            ->add(
+                'windows',
+                CheckboxType::class,
+                [
+                    'required' => false,
+                    'label' => 'Windows',
+                ]
+            )
+            ->add(
+                'linux',
+                CheckboxType::class,
+                [
+                    'required' => false,
+                    'label' => 'Linux',
+                ]
+            )
+            ->add(
+                'mac',
+                CheckboxType::class,
+                [
+                    'required' => false,
+                    'label' => 'Mac',
+                ]
+            )
+            ->add(
+                'android',
+                CheckboxType::class,
+                [
+                    'required' => false,
+                    'label' => 'Android',
+                ]
+            )
+            ->add(
+                'windowsFile',
+                FileType::class,
+                [
+                    'required' => false,
+                    'multiple' => false,
+                    'label' => 'Exécutable Windows',
+                ]
+            )
+            ->add(
+                'linuxFile',
+                FileType::class,
+                [
+                    'required' => false,
+                    'multiple' => false,
+                    'label' => 'Exécutable Linux',
+                ]
+            )
+            ->add(
+                'macFile',
+                FileType::class,
+                [
+                    'required' => false,
+                    'multiple' => false,
+                    'label' => 'Exécutable Mac',
+                ]
+            )
+            ->add(
+                'androidFile',
+                FileType::class,
+                [
+                    'required' => false,
+                    'multiple' => false,
+                    'label' => 'Exécutable Android',
+                ]
+            )
             ->add(
                 'coverFile',
                 VichImageType::class,
@@ -61,7 +125,8 @@ class AppFormType extends AbstractType
                     'choice_value' => 'getId',
                     'choice_label' => 'getFr',
                 ]
-            );
+            )
+        ->add('isReleased');
 
         $builder->get('classification')->addEventListener(
             FormEvents::POST_SUBMIT,

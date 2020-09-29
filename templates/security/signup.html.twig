@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+{#{% form_theme sign_up_form 'bootstrap_4_layout.html.twig' %}#}
+{% block title %}Inscription{% endblock %}
+
+{% block body %}
+    <div class="col-6" style="margin: auto;">
+        <h1 style="text-align: center">
+            {% if is_classic_user %}
+                Inscription
+            {% else %}
+                Création compte Développeur
+            {% endif %}
+        </h1>
+        {{ form_start(sign_up_form) }}
+
+        {{ form_row(sign_up_form.first_name, {
+            'label':'Prénom',
+            'attr':{
+                'placeholder': 'Ex : Percil'
+            }
+        }) }}
+
+        {{ form_row(sign_up_form.last_name, {
+            'label':'Nom',
+            'attr':{
+                'placeholder': ' Ex : Dedmado'
+            }
+        }) }}
+
+        {{ form_row(sign_up_form.email, {
+            'label':'Email',
+            'attr':{
+                'placeholder':'Ex : pdedmado@jakpaa.com'
+            }
+        }) }}
+
+        {{ form_row(sign_up_form.gender, {
+            'label': 'Vous êtes un(e)',
+            'placeholder' : 'Choississez un genre'
+        }) }}
+
+        {{ form_row(sign_up_form.username, {
+            'label':'Nom d\'utilisateur',
+            'attr':{
+                'placeholder': 'Ex: dedmado'
+            }
+        }) }}
+
+        {{ form_row(sign_up_form.password, {
+            'label':'Mot de passe',
+            'attr':{
+                'placeholder': 'votremotdepasse'
+            }
+        }) }}
+
+        {{ form_row(sign_up_form.confirmPassword, {
+            'label':'Entrer à nouveau votre mot de passe',
+            'attr':{
+                'placeholder': 'votremotdepasse'
+            }
+        }) }}
+
+
+{#        {{ form_row(sign_up_form.avatar, {'label':'Avatar','attr':{'placeholder': 'Choisissez votre avatar'}}) }}#}
+
+        <button type="submit" class="btn btn-success">S'inscrire</button>
+        <p></p>
+
+        {{ form_end(sign_up_form) }}
+    </div>
+{% endblock %}

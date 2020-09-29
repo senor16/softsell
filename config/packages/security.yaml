@@ -1,28 +1,32 @@
-#security:
-##    encoders:
-##        App\Entity\Admin:
-##            algorithm: auto
-#
-#    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
-##    providers:
-#        # used to reload user from session & other features (e.g. switch_user)
-##        app_user_provider:
-##            entity:
-##                class: App\Entity\Admin
-##                property: username
-#    firewalls:
-#        dev:
-#            pattern: ^/(_(profiler|wdt)|css|images|js)/
-#            security: false
-#        main:
-#            anonymous: true
-#            lazy: true
-##            provider: app_user_provider
-##            guard:
-##                authenticators:
-##                    - App\Security\AppAuthenticator
-##            logout:
-##                path: app_logout
+security:
+    encoders:
+        App\Entity\Developer:
+            algorithm: bcrypt
+        App\Entity\User:
+            algorithm: bcrypt
+
+    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
+    providers:
+        # used to reload user from session & other features (e.g. switch_user)
+        in_database:
+            entity:
+                class: App\Entity\Developer
+                property: username
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            anonymous: true
+            lazy: true
+            provider: in_database
+
+            form_login:
+                login_path: secutity_login
+                check_path: security_login
+            logout:
+              path: security_logout
+              target: home
 #                # where to redirect after logout
 #                # target: app_any_route
 #

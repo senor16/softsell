@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20200918131638 extends AbstractMigration
+final class Version20200928120918 extends AbstractMigration
 {
     public function getDescription() : string
     {
@@ -20,12 +20,12 @@ final class Version20200918131638 extends AbstractMigration
     public function up(Schema $schema) : void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('DROP INDEX views ON app');
+        $this->addSql('ALTER TABLE developer DROP gender');
     }
 
     public function down(Schema $schema) : void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE UNIQUE INDEX views ON app (views)');
+        $this->addSql('ALTER TABLE developer ADD gender TINYINT(1) NOT NULL');
     }
 }

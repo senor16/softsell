@@ -86,14 +86,13 @@ class App
     private $comments;
 
     /**
-     * @ORM\OneToMany(targetEntity=Executable::class, mappedBy="app")
+     * @ORM\OneToMany(targetEntity=Executable::class, mappedBy="app",cascade={"persist"})
      */
     private $executables;
 
 
     /**
      * @ORM\ManyToOne(targetEntity=Developer::class, inversedBy="uploads")
-     * @ORM\JoinColumn(nullable=false)
      */
     private $developer;
 
@@ -124,6 +123,152 @@ class App
      * @ORM\ManyToOne(targetEntity=Classification::class, inversedBy="apps")
      */
     private $classification;
+
+    private $windows;
+    private $mac;
+    private $android;
+    private $linux;
+
+    private $windowsFile;
+    private $macFile;
+    private $androidFile;
+    private $linuxFile;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isReleased;
+
+    /**
+     * @return mixed
+     */
+    public function getWindowsFile()
+    {
+        return $this->windowsFile;
+    }
+
+    /**
+     * @param mixed $windowsFile
+     */
+    public function setWindowsFile($windowsFile): void
+    {
+        $this->windowsFile = $windowsFile;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMacFile()
+    {
+        return $this->macFile;
+    }
+
+    /**
+     * @param mixed $macFile
+     */
+    public function setMacFile($macFile): void
+    {
+        $this->macFile = $macFile;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAndroidFile()
+    {
+        return $this->androidFile;
+    }
+
+    /**
+     * @param mixed $androidFile
+     */
+    public function setAndroidFile($androidFile): void
+    {
+        $this->androidFile = $androidFile;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLinuxFile()
+    {
+        return $this->linuxFile;
+    }
+
+    /**
+     * @param mixed $linuxFile
+     */
+    public function setLinuxFile($linuxFile): void
+    {
+        $this->linuxFile = $linuxFile;
+    }
+
+
+
+    /**
+     * @return mixed
+     */
+    public function getWindows()
+    {
+        return $this->windows;
+    }
+
+    /**
+     * @param mixed $windows
+     */
+    public function setWindows($windows): void
+    {
+        $this->windows = $windows;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMac()
+    {
+        return $this->mac;
+    }
+
+    /**
+     * @param mixed $mac
+     */
+    public function setMac($mac): void
+    {
+        $this->mac = $mac;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAndroid()
+    {
+        return $this->android;
+    }
+
+    /**
+     * @param mixed $android
+     */
+    public function setAndroid($android): void
+    {
+        $this->android = $android;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLinux()
+    {
+        return $this->linux;
+    }
+
+    /**
+     * @param mixed $linux
+     */
+    public function setLinux($linux): void
+    {
+        $this->linux = $linux;
+    }
+
 
 
 
@@ -407,6 +552,18 @@ class App
     public function setClassification(?Classification $classification): self
     {
         $this->classification = $classification;
+
+        return $this;
+    }
+
+    public function getIsReleased(): ?bool
+    {
+        return $this->isReleased;
+    }
+
+    public function setIsReleased(bool $isReleased): self
+    {
+        $this->isReleased = $isReleased;
 
         return $this;
     }
