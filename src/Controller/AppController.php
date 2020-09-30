@@ -3,18 +3,21 @@
 namespace App\Controller;
 
 use App\Entity\App;
+use App\Entity\AppDownload;
 use App\Entity\Comment;
-use App\Entity\Developer;
 use App\Entity\Executable;
 use App\Entity\Screenshot;
 use App\Form\AppFormType;
 use App\Form\CommentFormType;
+use App\Repository\AppDownloadRepository;
 use App\Repository\AppRepository;
 use App\Repository\CommentRepository;
+use App\Repository\ExecutableRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -24,7 +27,6 @@ class AppController extends AbstractController
 {
     private $twig;
     private $entityManager;
-
 
 
     public function __construct(Environment $twig, EntityManagerInterface $entityManager)
@@ -49,8 +51,14 @@ class AppController extends AbstractController
     /**
      * @Route("/new", name="application_new")
      * @Route("/{slug}/edit" ,name="application_edit" ,priority=-10)
+     * @param App|null $application
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
      */
-    public function form(App $application = null, Request $request)
+    public function form(App $application = null, Request $request, ExecutableRepository $executableRepository)
     {
         if (!$application) {
             $application = new App();
@@ -73,15 +81,15 @@ class AppController extends AbstractController
             $this->entityManager->persist($application);
             $this->entityManager->flush();
 
-            $destination = $this->getParameter('screenshots_directory').'/'.$form->get('developer')->getData()->getId().'/'.$application->getId();
+            $destination = $this->getParameter('screenshots_directory').'/'.$form->get('developer')->getData()->getId(
+                ).'/'.$application->getId();
             try {
                 mkdir($destination);
-             } catch (\Exception $e) {
+            } catch (\Exception $e) {
             }
 
             foreach ($screenshots as $screenshot) {
                 $screenshotname = bin2hex(random_bytes(12)).'.'.$screenshot->guessExtension();
-//                $destination = $this->getParameter('screenshots_directory').'/'.$form->get('developer')->getData()->getId();
 
                 try {
                     $screenshot->move($destination, $screenshotname);
@@ -99,10 +107,22 @@ class AppController extends AbstractController
                 ).'/'.$application->getId();
             try {
                 mkdir($filedest);
-            } catch (\Exception $e) {dump($e);}
+            } catch (\Exception $e) {
+                dump($e);
+            }
 
             if ($form->get('windows')->getData() and $form->getData()->getWindowsFile() !== null) {
-                /* @var $windowsFile File*/
+
+                foreach ($application->getExecutables() as $executable) {
+                    if ($executable->getPlatform() === "Windows") {
+                        unlink($filedest.'/'.$executable->getName());
+                        $this->entityManager->remove($executable);
+                        $this->entityManager->flush();
+                    }
+                }
+
+
+                /* @var $windowsFile File */
                 $windowsFile = $form->getData()->getWindowsFile();
                 $wexecutable = new Executable();
                 $wexecutable->setSize($windowsFile->getSize());
@@ -122,7 +142,14 @@ class AppController extends AbstractController
             }
 
             if ($form->get('linux')->getData() and $form->getData()->getLinuxFile() !== null) {
-                /* @var $linuxFile File*/
+                foreach ($application->getExecutables() as $executable) {
+                    if ($executable->getPlatform() === "Linux") {
+                        unlink($filedest.'/'.$executable->getName());
+                        $this->entityManager->remove($executable);
+                        $this->entityManager->flush();
+                    }
+                }
+                /* @var $linuxFile File */
                 $linuxFile = $form->get('linuxFile')->getData();
                 $lname = bin2hex(random_bytes(12)).'.'.$linuxFile->guessExtension();
                 $lexecutable = new Executable();
@@ -142,7 +169,14 @@ class AppController extends AbstractController
             }
 
             if ($form->get('mac')->getData() and $form->getData()->getMacFile() !== null) {
-                /* @var $macFile File*/
+                foreach ($application->getExecutables() as $executable) {
+                    if ($executable->getPlatform() === "Mac") {
+                        unlink($filedest.'/'.$executable->getName());
+                        $this->entityManager->remove($executable);
+                        $this->entityManager->flush();
+                    }
+                }
+                /* @var $macFile File */
                 $macFile = $form->get('macFile')->getData();
                 $mname = bin2hex(random_bytes(12)).'.'.$macFile->guessExtension();
                 $mexecutable = new Executable();
@@ -162,7 +196,14 @@ class AppController extends AbstractController
             }
 
             if ($form->get('android')->getData() and $form->getData()->getAndroidFile() !== null) {
-                /* @var $androidFile File*/
+                foreach ($application->getExecutables() as $executable) {
+                    if ($executable->getPlatform() === "Android") {
+                        unlink($filedest.'/'.$executable->getName());
+                        $this->entityManager->remove($executable);
+                        $this->entityManager->flush();
+                    }
+                }
+                /* @var $androidFile File */
                 $androidFile = $form->get('androidFile')->getData();
                 $aname = bin2hex(random_bytes(12)).'.'.$androidFile->guessExtension();
                 $aexecutable = new Executable();
@@ -195,18 +236,22 @@ class AppController extends AbstractController
                 [
                     'application_form' => $form->createView(),
                     'edit_mode' => $application->getId() !== null,
-                    'application'=>$application,
-
+                    'application' => $application,
                 ]
             )
         );
-
-
     }
 
     /**
      * @Route("/{slug}", name="application_show", priority="-10")
      * @Route("/{slug}" , name="comment_show" ,defaults={"_fragment": "comments"},priority="-10")
+     * @param Request $request
+     * @param App $application
+     * @param CommentRepository $commentRepository
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
      */
     public function show(Request $request, App $application, CommentRepository $commentRepository)
     {
@@ -219,6 +264,8 @@ class AppController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $comment->setApp($application);
             $comment->setCreatedAtValue();
+            $comment->setAuthor($this->getUser()->getFirstName(). ' '.$this->getUser()->getLastName());
+            $comment->setEmail($this->getUser()->getEmail());
             $this->entityManager->persist($comment);
             $this->entityManager->flush();
 
@@ -244,10 +291,14 @@ class AppController extends AbstractController
 
     /**
      * @Route("/delete/screenshots/{id}", name="application_delete_screenshot", methods={"DELETE"})
+     * @param Screenshot $screenshot
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function deleteScreenshot(Screenshot $screenshot, Request $request){
+    public function deleteScreenshot(Screenshot $screenshot, Request $request)
+    {
         $data = json_decode($request->getContent(), true);
-        if($this->isCsrfTokenValid('screenshot'.$screenshot->getId(), $data['_token'])) {
+        if ($this->isCsrfTokenValid('screenshot'.$screenshot->getId(), $data['_token'])) {
             unlink(
                 $this->getParameter('screenshots_directory').'/'.$screenshot->getApp()->getDeveloper()->getId(
                 ).'/'.$screenshot->getApp()->getId().'/'.$screenshot->getFilename()
@@ -257,17 +308,21 @@ class AppController extends AbstractController
             $this->entityManager->flush();
 
             return new JsonResponse(['success' => 1]);
-        }else{
-            return new JsonResponse(['error'=>'Token invalide'],400);
+        } else {
+            return new JsonResponse(['error' => 'Token invalide'], 400);
         }
     }
 
     /**
      * @Route("/delete/executable/{id}", name="application_delete_executable", methods={"DELETE"})
+     * @param Executable $executable
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function deleteExecutable(Executable $executable, Request $request){
-        $data = json_decode($request->getContent(),true);
-        if($this->isCsrfTokenValid('executable'.$executable->getId(), $data['_token'])){
+    public function deleteExecutable(Executable $executable, Request $request)
+    {
+        $data = json_decode($request->getContent(), true);
+        if ($this->isCsrfTokenValid('executable'.$executable->getId(), $data['_token'])) {
             unlink(
                 $this->getParameter('executables_directory').'/'.$executable->getApp()->getDeveloper()->getId(
                 ).'/'.$executable->getApp()->getId().'/'.$executable->getName()
@@ -276,9 +331,72 @@ class AppController extends AbstractController
             $this->entityManager->remove($executable);
             $this->entityManager->flush();
 
-            return new JsonResponse(['success'=>1]);
-        }else{
-            return new JsonResponse(['error'=>'Token invalide'], 400);
+            return new JsonResponse(['success' => 1]);
+        } else {
+            return new JsonResponse(['error' => 'Token invalide'], 400);
+        }
+    }
+
+    /**
+     * @param App $app
+     * @param AppDownloadRepository $appDownloadRepository
+     * @param ExecutableRepository $executableRepository
+     * @param $platform
+     * @return Response
+     * @Route(" /{slug}/download/{platform}", name="application_download")
+     * @throws \Exception
+     */
+    public function download(
+        App $app,
+        AppDownloadRepository $appDownloadRepository,
+        ExecutableRepository $executableRepository,
+        $platform
+    ): Response {
+        $user = $this->getUser();
+        if ($user) {
+
+
+            if (!$app->isDownloadedBy($user)) {
+                $download = new AppDownload();
+                $download->setCreatedAt(new \DateTime())
+                    ->setPlatform($platform)
+                    ->setApp($app);
+
+                if (in_array("ROLE_DEVELOPER", $user->getRoles())) {
+                    $download->setDeveloper($user);
+                } else {
+                    $download->setUser($user);
+                }
+
+                $this->entityManager->persist($download);
+                $this->entityManager->flush();
+            }
+
+        }
+        $allowed_platform = [
+            'Windows',
+            'Linux',
+            'Mac',
+            'Android',
+        ];
+        $platform = ucwords($platform);
+        if (in_array($platform, $allowed_platform)) {
+            $executable = $executableRepository->findOneBy(['app' => $app, 'platform' => $platform]);
+            if ($executable) {
+                $executable->setDownloads($executable->getDownloads() + 1);
+                $this->entityManager->flush();
+
+                $filedest = $this->getParameter('executables_download').'/'.$app->getDeveloper()->getId(
+                    ).'/'.$app->getId().'/'.$executable->getName();
+
+                return $this->redirect($filedest);
+
+            } else {
+                return $this->json(['code' => 404, 'message' => 'Fichié non trouvé.'], 404);
+            }
+
+        } else {
+            return $this->json(['code' => 404, 'message' => 'Plateforme incorrecte'], 404);
         }
     }
 }

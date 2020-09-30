@@ -57,10 +57,7 @@ class Developer implements UserInterface
      */
     private $uploads;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=App::class)
-     */
-    private $downloads;
+
 
     /**
      * @ORM\Column(type="datetime")
@@ -81,6 +78,11 @@ class Developer implements UserInterface
      * @ORM\ManyToOne(targetEntity=Gender::class, inversedBy="developers")
      */
     private $gender;
+
+    /**
+     * @ORM\OneToMany(targetEntity=AppDownload::class, mappedBy="developer")
+     */
+    private $downloads;
 
     public function __construct()
     {
@@ -189,31 +191,9 @@ class Developer implements UserInterface
         return $this;
     }
 
-    /**
-     * @return Collection|App[]
-     */
-    public function getDownloads(): Collection
-    {
-        return $this->downloads;
-    }
 
-    public function addDownload(App $download): self
-    {
-        if (!$this->downloads->contains($download)) {
-            $this->downloads[] = $download;
-        }
 
-        return $this;
-    }
 
-    public function removeDownload(App $download): self
-    {
-        if ($this->downloads->contains($download)) {
-            $this->downloads->removeElement($download);
-        }
-
-        return $this;
-    }
 
     public function getCreatedAt(): ?\DateTimeInterface
     {
@@ -284,7 +264,7 @@ class Developer implements UserInterface
      */
     public function getRoles()
     {
-        return ['ROLE_USER'];
+        return ['ROLE_DEVELOPER'];
     }
 
     /**
@@ -309,5 +289,36 @@ class Developer implements UserInterface
     public function eraseCredentials()
     {
         // TODO: Implement eraseCredentials() method.
+    }
+
+    /**
+     * @return Collection|AppDownload[]
+     */
+    public function getDownloads(): Collection
+    {
+        return $this->downloads;
+    }
+
+    public function addDownload(AppDownload $download): self
+    {
+        if (!$this->downloads->contains($download)) {
+            $this->downloads[] = $download;
+            $download->setDeveloper($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDownload(AppDownload $download): self
+    {
+        if ($this->downloads->contains($download)) {
+            $this->downloads->removeElement($download);
+            // set the owning side to null (unless already changed)
+            if ($download->getDeveloper() === $this) {
+                $download->setDeveloper(null);
+            }
+        }
+
+        return $this;
     }
 }

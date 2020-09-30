@@ -53,10 +53,7 @@ class User implements UserInterface
     private $confirmPassword;
 
 
-    /**
-     * @ORM\ManyToMany(targetEntity=App::class)
-     */
-    private $downloads;
+
 
     /**
      * @ORM\Column(type="datetime")
@@ -78,10 +75,17 @@ class User implements UserInterface
      */
     private $avatar;
 
+    /**
+     * @ORM\OneToMany(targetEntity=AppDownload::class, mappedBy="user")
+     */
+    private $downloads;
+
     public function __construct()
     {
         $this->downloads = new ArrayCollection();
     }
+
+
 
     public function getId(): ?int
     {
@@ -154,31 +158,6 @@ class User implements UserInterface
         $this->confirmPassword = $confirmPassword;
     }
 
-    /**
-     * @return Collection|App[]
-     */
-    public function getDownloads(): Collection
-    {
-        return $this->downloads;
-    }
-
-    public function addDownload(App $download): self
-    {
-        if (!$this->downloads->contains($download)) {
-            $this->downloads[] = $download;
-        }
-
-        return $this;
-    }
-
-    public function removeDownload(App $download): self
-    {
-        if ($this->downloads->contains($download)) {
-            $this->downloads->removeElement($download);
-        }
-
-        return $this;
-    }
 
     public function getCreatedAt(): ?\DateTimeInterface
     {
@@ -268,5 +247,36 @@ class User implements UserInterface
     public function eraseCredentials()
     {
         // TODO: Implement eraseCredentials() method.
+    }
+
+    /**
+     * @return Collection|AppDownload[]
+     */
+    public function getDownloads(): Collection
+    {
+        return $this->downloads;
+    }
+
+    public function addDownload(AppDownload $download): self
+    {
+        if (!$this->downloads->contains($download)) {
+            $this->downloads[] = $download;
+            $download->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDownload(AppDownload $download): self
+    {
+        if ($this->downloads->contains($download)) {
+            $this->downloads->removeElement($download);
+            // set the owning side to null (unless already changed)
+            if ($download->getUser() === $this) {
+                $download->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

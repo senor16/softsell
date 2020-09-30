@@ -23,20 +23,22 @@
                 <small>({{ application.developer.email }})</small></h5>
             <p><h4>Description :</h4>{{ application.description }}</p>
             {% if application.executables|length >0 %}
-                <h3><i class="fas fa-download"></i> Télécharger </h3>
+                <h3><i class="fas fa-download"></i> Télécharger ( <span
+                            class="js-downloads">{{ application.getTotalDownloads() }}</span> fois)</h3>
                 {% for executable in application.executables %}
-                    <a href="{{ asset('uploads/files/'~application.developer.id~'/'~executable.name) }}">{{ application.slug }}
-                        .{{ executable.name|split('.')|last }}
+                    <a href="{{path('application_download', {slug:application.slug, platform:executable.platform})}}">{{ application.slug~'.'~executable.name|split('.')|last }}
                         ({{ executable.platform }}) </a> : {{ executable.showSize }}
-                    {% if executable.platform == 'Windows' %}
-                        <i class="fab fa-windows"></i>
-                    {% elseif executable.platform == "Mac" %}
-                        <i class="fab fa-apple"></i>
-                    {% elseif executable.platform == "Linux" %}
-                        <i class="fab fa-linux"></i>
-                    {% elseif executable.platform == "Android" %}
-                        <i class="fab fa-android"></i>
-                    {% endif %}
+                    <div style="font-size: 1.3em; display: inline;">
+                        {% if executable.platform == 'Windows' %}
+                            <i class="fab fa-windows "></i>
+                        {% elseif executable.platform == "Mac" %}
+                            <i class="fab fa-apple"></i>
+                        {% elseif executable.platform == "Linux" %}
+                            <i class="fab fa-linux"></i>
+                        {% elseif executable.platform == "Android" %}
+                            <i class="fab fa-android"></i>
+                        {% endif %}
+                    </div>
                     <br/>
                 {% endfor %}
 
@@ -71,23 +73,21 @@
                     <h3>Aucun commentaire n'a été publiée.</h3>
                 {% endif %}
                 {% if app.user %}
-                <h4>Ajouter un commentaire</h4>
-                {{ form_start(comment_form) }}
-                {{ form_row(comment_form.text, {
-                    'label' : 'Votre commentaire',
-                    'attr' : {
-                        'placeholder' : 'Tapez votre commentaire'
-                    }
-                }) }}
-                    <div hidden>
-                        {{ form_row(comment_form.author,{'attr':{'value': app.user.firstName~' '~app.user.lastName}}) }}
-                        {{ form_row(comment_form.email,{'attr':{'value': app.user.email}}) }}
-                    </div>
+                    <h4>Ajouter un commentaire</h4>
+                    {{ form_start(comment_form) }}
+                    {{ form_row(comment_form.text, {
+                        'label' : 'Votre commentaire',
+                        'attr' : {
+                            'placeholder' : 'Tapez votre commentaire'
+                        }
+                    }) }}
+
                     <button type="submit" class="btn btn-success">Envoyer</button>
-                {{ form_end(comment_form) }}
+                    {{ form_end(comment_form) }}
                 {% else %}
 
-                    <h2>Vous devez d'abort vous connecter afin de faire un commentaire</h2> <a href="{{ path('security_login') }}" class="btn btn-primary">Connexion</a>
+                    <h2>Vous devez d'abort vous connecter afin de faire un commentaire</h2> <a
+                        href="{{ path('security_login') }}" class="btn btn-primary">Connexion</a>
                 {% endif %}
             </div>
         </div>

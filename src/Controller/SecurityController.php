@@ -48,9 +48,7 @@ class SecurityController extends AbstractController
             $this->entityManager->persist($developer);
             $this->entityManager->flush();
 
-            $this->redirectToRoute('security_login',[
-                'username'=>$developer->getUsername(),
-            ]);
+            return $this->redirectToRoute('security_login');
         }
 
         return $this->render(
@@ -97,9 +95,7 @@ class SecurityController extends AbstractController
             $this->entityManager->persist($user);
             $this->entityManager->flush();
 
-            $this->redirectToRoute('security_login',[
-                'username'=>$user->getUsername(),
-            ]);
+            return $this->redirectToRoute('security_login');
         }
         return $this->render(
             'security/signup.html.twig',

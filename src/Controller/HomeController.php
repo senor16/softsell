@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Repository\AppRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends AbstractController
@@ -13,10 +14,14 @@ class HomeController extends AbstractController
      */
     public function index(AppRepository $appRepository)
     {
-        return $this->render('home/index.html.twig', [
-            'applications' => $appRepository->findAll(),
-            'controller_name' => 'HomeController'
-        ]);
+        return $this->render(
+            'home/index.html.twig',
+            [
+                'applications' => $appRepository->findAll(),
+                'controller_name' => 'HomeController'
+            ]
+        );
 
     }
+
 }

@@ -140,6 +140,11 @@ class App
     private $isReleased;
 
     /**
+     * @ORM\OneToMany(targetEntity=AppDownload::class, mappedBy="app")
+     */
+    private $downloads;
+
+    /**
      * @return mixed
      */
     public function getWindowsFile()
@@ -277,6 +282,7 @@ class App
         $this->screenshots = new ArrayCollection();
         $this->comments = new ArrayCollection();
         $this->executables = new ArrayCollection();
+        $this->downloads = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -568,6 +574,55 @@ class App
         return $this;
     }
 
+    /**
+     * @return Collection|AppDownload[]
+     */
+    public function getDownloads(): Collection
+    {
+        return $this->downloads;
+    }
 
+    public function addDownload(AppDownload $download): self
+    {
+        if (!$this->downloads->contains($download)) {
+            $this->downloads[] = $download;
+            $download->setApp($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDownload(AppDownload $download): self
+    {
+        if ($this->downloads->contains($download)) {
+            $this->downloads->removeElement($download);
+            // set the owning side to null (unless already changed)
+            if ($download->getApp() === $this) {
+                $download->setApp(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function isDownloadedBy($user) : bool {
+        foreach ($this->downloads as $download) {
+
+            if($download->getUser() === $user || $download->getDeveloper()) return true;
+        }
+        return false;
+    }
+
+
+
+
+
+    public function getTotalDownloads():int {
+        $d = 0;
+        foreach ($this->getExecutables() as $exec) {
+            $d+= $exec->getDownloads();
+        }
+        return $d;
+    }
 
 }

@@ -18,7 +18,11 @@
                     {% endif %}
 
                 <br/>
-                    <h4><a href="{{ path('application_show',{slug:application.slug}) }}"> {{ application.title }}</a>
+                    <h4><a href="{{ path('application_show',{slug:application.slug}) }}">
+                        {% if app.user and application.isDownloadedBy(app.user) %}
+                            <i class="fa fa-check-circle"></i>
+                        {% endif %}
+                            {{ application.title }} </a>
                         {% for executable in application.executables %}
                             {% if executable.platform == 'Windows' %}
                                 <i class="fab fa-windows"></i>
@@ -30,6 +34,7 @@
                                 <i class="fab fa-android"></i>
                             {% endif %}
                         {% endfor %}
+
                     </h4>
                 {{ application.shortDescription }}
             </div>
