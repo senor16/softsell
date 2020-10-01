@@ -14,6 +14,7 @@ use App\Repository\AppRepository;
 use App\Repository\CommentRepository;
 use App\Repository\ExecutableRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -49,6 +50,7 @@ class AppController extends AbstractController
     }
 
     /**
+     * @IsGranted("ROLE_DEVELOPER")
      * @Route("/new", name="application_new")
      * @Route("/{slug}/edit" ,name="application_edit" ,priority=-10)
      * @param App|null $application
@@ -290,6 +292,7 @@ class AppController extends AbstractController
     }
 
     /**
+     * @IsGranted("ROLE_DEVELOPER")
      * @Route("/delete/screenshots/{id}", name="application_delete_screenshot", methods={"DELETE"})
      * @param Screenshot $screenshot
      * @param Request $request
@@ -314,6 +317,7 @@ class AppController extends AbstractController
     }
 
     /**
+     * @IsGranted("ROLE_DEVELOPER")
      * @Route("/delete/executable/{id}", name="application_delete_executable", methods={"DELETE"})
      * @param Executable $executable
      * @param Request $request
@@ -389,7 +393,8 @@ class AppController extends AbstractController
                 $filedest = $this->getParameter('executables_download').'/'.$app->getDeveloper()->getId(
                     ).'/'.$app->getId().'/'.$executable->getName();
 
-                return $this->redirect($filedest);
+                return new RedirectResponse($this->generateUrl('home').'/'.$filedest);
+
 
             } else {
                 return $this->json(['code' => 404, 'message' => 'Fichié non trouvé.'], 404);

@@ -37,11 +37,6 @@ class AppDownload
      */
     private $platform;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Developer::class, inversedBy="downloads")
-     */
-    private $developer;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -95,15 +90,5 @@ class AppDownload
         return $this;
     }
 
-    public function getDeveloper(): ?Developer
-    {
-        return $this->developer;
-    }
 
-    public function setDeveloper(?Developer $developer): self
-    {
-        $this->developer = $developer;
-
-        return $this;
-    }
 }

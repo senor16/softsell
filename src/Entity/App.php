@@ -91,10 +91,6 @@ class App
     private $executables;
 
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Developer::class, inversedBy="uploads")
-     */
-    private $developer;
 
     /**
      * @ORM\Column(type="integer")
@@ -143,6 +139,11 @@ class App
      * @ORM\OneToMany(targetEntity=AppDownload::class, mappedBy="app")
      */
     private $downloads;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="publishedApp")
+     */
+    private $developer;
 
     /**
      * @return mixed
@@ -483,17 +484,6 @@ class App
     }
 
 
-    public function getDeveloper(): ?Developer
-    {
-        return $this->developer;
-    }
-
-    public function setDeveloper(?Developer $developer): self
-    {
-        $this->developer = $developer;
-
-        return $this;
-    }
 
     public function getViews(): ?int
     {
@@ -623,6 +613,18 @@ class App
             $d+= $exec->getDownloads();
         }
         return $d;
+    }
+
+    public function getDeveloper(): ?User
+    {
+        return $this->developer;
+    }
+
+    public function setDeveloper(?User $developer): self
+    {
+        $this->developer = $developer;
+
+        return $this;
     }
 
 }

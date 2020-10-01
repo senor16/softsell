@@ -5,10 +5,10 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -52,9 +52,6 @@ class User implements UserInterface
      */
     private $confirmPassword;
 
-
-
-
     /**
      * @ORM\Column(type="datetime")
      */
@@ -80,11 +77,21 @@ class User implements UserInterface
      */
     private $downloads;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $role;
+
+    /**
+     * @ORM\OneToMany(targetEntity=App::class, mappedBy="developer")
+     */
+    private $publishedApp;
+
     public function __construct()
     {
         $this->downloads = new ArrayCollection();
+        $this->publishedApp = new ArrayCollection();
     }
-
 
 
     public function getId(): ?int
@@ -223,6 +230,10 @@ class User implements UserInterface
      */
     public function getRoles()
     {
+        if ($this->role == 'ROLE_DEVELOPER') {
+            return ['ROLE_DEVELOPER'];
+        }
+
         return ['ROLE_USER'];
     }
 
@@ -278,5 +289,53 @@ class User implements UserInterface
         }
 
         return $this;
+    }
+
+    public function getRole(): ?string
+    {
+        return $this->role;
+    }
+
+    public function setRole(string $role): self
+    {
+        $this->role = strtoupper($role);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|App[]
+     */
+    public function getPublishedApp(): Collection
+    {
+        return $this->publishedApp;
+    }
+
+    public function addPublishedApp(App $publishedApp): self
+    {
+        if (!$this->publishedApp->contains($publishedApp)) {
+            $this->publishedApp[] = $publishedApp;
+            $publishedApp->setDeveloper($this);
+        }
+
+        return $this;
+    }
+
+    public function removePublishedApp(App $publishedApp): self
+    {
+        if ($this->publishedApp->contains($publishedApp)) {
+            $this->publishedApp->removeElement($publishedApp);
+            // set the owning side to null (unless already changed)
+            if ($publishedApp->getDeveloper() === $this) {
+                $publishedApp->setDeveloper(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->username;
     }
 }

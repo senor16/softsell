@@ -34,10 +34,6 @@ class Gender
      */
     private $en;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Developer::class, mappedBy="gender")
-     */
-    private $developers;
 
     /**
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="gender")
@@ -46,7 +42,6 @@ class Gender
 
     public function __construct()
     {
-        $this->developers = new ArrayCollection();
         $this->users = new ArrayCollection();
     }
 
@@ -91,36 +86,7 @@ class Gender
         return $this;
     }
 
-    /**
-     * @return Collection|Developer[]
-     */
-    public function getDevelopers(): Collection
-    {
-        return $this->developers;
-    }
 
-    public function addDeveloper(Developer $developer): self
-    {
-        if (!$this->developers->contains($developer)) {
-            $this->developers[] = $developer;
-            $developer->setGender($this);
-        }
-
-        return $this;
-    }
-
-    public function removeDeveloper(Developer $developer): self
-    {
-        if ($this->developers->contains($developer)) {
-            $this->developers->removeElement($developer);
-            // set the owning side to null (unless already changed)
-            if ($developer->getGender() === $this) {
-                $developer->setGender(null);
-            }
-        }
-
-        return $this;
-    }
 
     public function __toString()
     {

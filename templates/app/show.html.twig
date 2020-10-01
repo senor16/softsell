@@ -57,7 +57,7 @@
                 {% if comments|length > 0 %}
                     {% for comment in comments %}
                         <p>
-                            {{ comment.author }} <small>({{ comment.email }})</small>
+                            <B>{{ comment.author }} </B><small>({{ comment.email }})</small>
                             <small>Posté
                                 le {{ comment.createdAt|format_datetime('medium', 'short', locale='fr') }}</small><br/>
                             {{ comment.text }}
