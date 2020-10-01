@@ -266,7 +266,7 @@ class AppController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $comment->setApp($application);
             $comment->setCreatedAtValue();
-            $comment->setAuthor($this->getUser()->getFirstName(). ' '.$this->getUser()->getLastName());
+            $comment->setAuthor($this->getUser()->getFirstName().' '.$this->getUser()->getLastName());
             $comment->setEmail($this->getUser()->getEmail());
             $this->entityManager->persist($comment);
             $this->entityManager->flush();
@@ -365,12 +365,8 @@ class AppController extends AbstractController
                 $download->setCreatedAt(new \DateTime())
                     ->setPlatform($platform)
                     ->setApp($app);
+                $download->setUser($user);
 
-                if (in_array("ROLE_DEVELOPER", $user->getRoles())) {
-                    $download->setDeveloper($user);
-                } else {
-                    $download->setUser($user);
-                }
 
                 $this->entityManager->persist($download);
                 $this->entityManager->flush();

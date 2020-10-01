@@ -79,7 +79,6 @@ class App
     private $screenshots;
 
 
-
     /**
      * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="app", orphanRemoval=true)
      */
@@ -89,7 +88,6 @@ class App
      * @ORM\OneToMany(targetEntity=Executable::class, mappedBy="app",cascade={"persist"})
      */
     private $executables;
-
 
 
     /**
@@ -144,6 +142,14 @@ class App
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="publishedApp")
      */
     private $developer;
+
+    public function __construct()
+    {
+        $this->screenshots = new ArrayCollection();
+        $this->comments = new ArrayCollection();
+        $this->executables = new ArrayCollection();
+        $this->downloads = new ArrayCollection();
+    }
 
     /**
      * @return mixed
@@ -209,8 +215,6 @@ class App
         $this->linuxFile = $linuxFile;
     }
 
-
-
     /**
      * @return mixed
      */
@@ -273,17 +277,6 @@ class App
     public function setLinux($linux): void
     {
         $this->linux = $linux;
-    }
-
-
-
-
-    public function __construct()
-    {
-        $this->screenshots = new ArrayCollection();
-        $this->comments = new ArrayCollection();
-        $this->executables = new ArrayCollection();
-        $this->downloads = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -360,7 +353,7 @@ class App
     {
         $this->coverFile = $coverFile;
 
-        if(null !== $coverFile){
+        if (null !== $coverFile) {
             $this->updatedAt = new \DateTimeImmutable();
         }
     }
@@ -378,8 +371,7 @@ class App
     }
 
 
-
-    public function getUpdatedAt():?\DateTimeInterface
+    public function getUpdatedAt(): ?\DateTimeInterface
     {
         return $this->updatedAt;
     }
@@ -452,14 +444,6 @@ class App
         return $this;
     }
 
-    /**
-     * @return Collection|Executable[]
-     */
-    public function getExecutables(): Collection
-    {
-        return $this->executables;
-    }
-
     public function addExecutable(Executable $executable): self
     {
         if (!$this->executables->contains($executable)) {
@@ -482,8 +466,6 @@ class App
 
         return $this;
     }
-
-
 
     public function getViews(): ?int
     {
@@ -591,28 +573,37 @@ class App
                 $download->setApp(null);
             }
         }
-
         return $this;
     }
 
-    public function isDownloadedBy($user) : bool {
+    public function isDownloadedBy(User $user): bool
+    {
         foreach ($this->downloads as $download) {
 
-            if($download->getUser() === $user || $download->getDeveloper()) return true;
+            if ($download->getUser() === $user) {
+                return true;
+            }
         }
+
         return false;
     }
 
-
-
-
-
-    public function getTotalDownloads():int {
+    public function getTotalDownloads(): int
+    {
         $d = 0;
         foreach ($this->getExecutables() as $exec) {
-            $d+= $exec->getDownloads();
+            $d += $exec->getDownloads();
         }
+
         return $d;
+    }
+
+    /**
+     * @return Collection|Executable[]
+     */
+    public function getExecutables(): Collection
+    {
+        return $this->executables;
     }
 
     public function getDeveloper(): ?User
