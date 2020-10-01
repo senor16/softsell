@@ -24,7 +24,6 @@ class AppFormType extends AbstractType
         $builder
             ->add('title')
             ->add('slug')
-            ->add('developer')
             ->add('short_description')
             ->add('description')
             ->add(

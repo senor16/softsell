@@ -62,8 +62,12 @@ class AppController extends AbstractController
      */
     public function form(App $application = null, Request $request, ExecutableRepository $executableRepository)
     {
+
         if (!$application) {
             $application = new App();
+        }else{
+            if($this->getUser() !== $application->getDeveloper())
+                return $this->redirectToRoute('application_show',['slug'=>$application->getSlug()]);
         }
 
         $form = $this->createForm(AppFormType::class, $application);
@@ -72,18 +76,19 @@ class AppController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $screenshots = $form->get('screenshotsFile')->getData();
-            dump($form->getData());
+
 
             if (!$application->getId()) {
                 $application->setCreatedAt(new \DateTime());
-            }
-            $application->setPrice(0);
-            $application->setViews(0);
 
+                $application->setPrice(0);
+                $application->setViews(0);
+                $application->setDeveloper($this->getUser());
+            }
             $this->entityManager->persist($application);
             $this->entityManager->flush();
 
-            $destination = $this->getParameter('screenshots_directory').'/'.$form->get('developer')->getData()->getId(
+            $destination = $this->getParameter('screenshots_directory').'/'.$this->getUser()->getId(
                 ).'/'.$application->getId();
             try {
                 mkdir($destination);
@@ -105,12 +110,12 @@ class AppController extends AbstractController
                 $application->addScreenshot($screen);
             }
 
-            $filedest = $this->getParameter('executables_directory').'/'.$form->get('developer')->getData()->getId(
+            $filedest = $this->getParameter('executables_directory').'/'.$this->getUser()->getId(
                 ).'/'.$application->getId();
             try {
                 mkdir($filedest);
             } catch (\Exception $e) {
-                dump($e);
+
             }
 
             if ($form->get('windows')->getData() and $form->getData()->getWindowsFile() !== null) {
@@ -389,7 +394,7 @@ class AppController extends AbstractController
                 $filedest = $this->getParameter('executables_download').'/'.$app->getDeveloper()->getId(
                     ).'/'.$app->getId().'/'.$executable->getName();
 
-                return new RedirectResponse($this->generateUrl('home').'/'.$filedest);
+                return $this->redirect($filedest);
 
 
             } else {
