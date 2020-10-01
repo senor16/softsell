@@ -16,11 +16,16 @@ window.onload = () => {
                 }).then(
                     response => response.json()
                 ).then(data => {
-                    if (data.success)
-                        this.parentElement.remove();
-                    else
-                        alert(data.error);
-                }).catch(e => alert(e))
+                        if (data.success) {
+                            if (this.id === 'application_delete') {
+                                this.parentElement.parentElement.parentElement.parentElement.remove();
+                            } else {
+                                this.parentElement.remove();
+                            }
+                        } else
+                            alert(data.error);
+                    }
+                ).catch(e => alert(e))
             }
         })
     }

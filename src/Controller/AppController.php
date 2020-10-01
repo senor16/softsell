@@ -18,7 +18,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -62,17 +61,21 @@ class AppController extends AbstractController
      */
     public function form(App $application = null, Request $request, ExecutableRepository $executableRepository)
     {
-
         if (!$application) {
             $application = new App();
-        }else{
-            if($this->getUser() !== $application->getDeveloper())
-                return $this->redirectToRoute('application_show',['slug'=>$application->getSlug()]);
+        } else {
+            if ($this->getUser() !== $application->getDeveloper()) {
+                return $this->redirectToRoute('application_show', ['slug' => $application->getSlug()]);
+            }
         }
 
         $form = $this->createForm(AppFormType::class, $application);
         $form->handleRequest($request);
 
+
+            dump($_POST);
+            dump($_FILES);
+            dump($form->getData());
 
         if ($form->isSubmitted() && $form->isValid()) {
             $screenshots = $form->get('screenshotsFile')->getData();
