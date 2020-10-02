@@ -134,7 +134,7 @@
                     {% if executable.platform == 'Windows' %}
                         <div id="windows-exec">
                             <a href="{{ asset('uploads/files/'~application.developer.id~'/'~executable.name) }}"><i
-                                        class="fab fa-windows" style="color: black;"></i> Télécharger
+                                        class="fab fa-windows" style="color: black; font-size: 1.3em;"></i> Télécharger
                                 ({{ executable.platform }}) </a> : {{ executable.showSize }}
                             <a href="{{ path('application_delete_executable', {id : executable.id}) }}"
                                style="color: red;" data-delete
@@ -150,7 +150,7 @@
                     {% if executable.platform == 'Linux' %}
                         <div id="linux-exec">
                             <a href="{{ asset('uploads/files/'~application.developer.id~'/'~executable.name) }}"><i
-                                        class="fab fa-linux" style="color: black;"></i> Télécharger
+                                        class="fab fa-linux" style="color: black; font-size: 1.3em;"></i> Télécharger
                                 ({{ executable.platform }}) </a> : {{ executable.showSize }}
                             <a href="{{ path('application_delete_executable', {id:executable.id}) }}"
                                style="color: red;" data-delete
@@ -165,7 +165,7 @@
                     {% if executable.platform == 'Mac' %}
                         <div id="mac-exec">
                             <a href="{{ asset('uploads/files/'~application.developer.id~'/'~executable.name) }}"><i
-                                        class="fab fa-apple" style="color: black;"></i> Télécharger
+                                        class="fab fa-apple" style="color: black; font-size: 1.3em;"></i> Télécharger
                                 ({{ executable.platform }}) </a> : {{ executable.showSize }}
                             <a href="{{ path('application_delete_executable', {id:executable.id}) }}"
                                style="color: red;" data-delete
@@ -180,7 +180,7 @@
                     {% if executable.platform == 'Android' %}
                         <div id="android-exec">
                             <a href="{{ asset('uploads/files/'~application.developer.id~'/'~executable.name) }}"><i
-                                        class="fab fa-android" style="color: black;"></i> Télécharger
+                                        class="fab fa-android" style="color: black; font-size: 1.3em;"></i> Télécharger
                                 ({{ executable.platform }}) </a> : {{ executable.showSize }}
                             <a href="{{ path('application_delete_executable', {id:executable.id}) }}"
                                style="color: red;" data-delete

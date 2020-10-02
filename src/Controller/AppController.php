@@ -36,14 +36,15 @@ class AppController extends AbstractController
     }
 
     /**
-     * @Route("/app", name="application")
+     * @IsGranted("ROLE_DEVELOPER")
+     * @Route("/dashboard", name="dashboard")
      */
     public function index(AppRepository $appRepository)
     {
         return new Response(
             $this->twig->render(
                 'app/index.html.twig',
-                ['applications' => $appRepository->findAll(),]
+                ['applications' => $appRepository->findBy(['developer' => $this->getUser(),]),]
             )
         );
     }
@@ -71,11 +72,6 @@ class AppController extends AbstractController
 
         $form = $this->createForm(AppFormType::class, $application);
         $form->handleRequest($request);
-
-
-            dump($_POST);
-            dump($_FILES);
-            dump($form->getData());
 
         if ($form->isSubmitted() && $form->isValid()) {
             $screenshots = $form->get('screenshotsFile')->getData();
@@ -406,6 +402,49 @@ class AppController extends AbstractController
 
         } else {
             return $this->json(['code' => 404, 'message' => 'Plateforme incorrecte'], 404);
+        }
+    }
+
+    /**
+     * @param App $app
+     * @param Request $request
+     * @IsGranted("ROLE_DEVELOPER")
+     * @Route("{slug}/delete", name="application_delete", methods={"DELETE"})
+     */
+    public function deleteApp(App $app, Request $request)
+    {
+        $data = json_decode($request->getContent(), true);
+        if ($this->isCsrfTokenValid('application'.$app->getId(), $data['_token'])) {
+            foreach ($app->getExecutables() as $executable) {
+                try {
+                    unlink(
+                        $this->getParameter('executables_directory').'/'.$this->getUser()->getId().'/'.$app->getId(
+                        ).'/'.$executable->getName()
+                    );
+                }catch (\Exception $e){}
+                $this->entityManager->remove($executable);
+            }
+            rmdir($this->getParameter('executables_directory').'/'.$this->getUser()->getId().'/'.$app->getId());
+
+            foreach ($app->getScreenshots() as $screenshot) {
+                try {
+                    unlink(
+                        $this->getParameter('screenshots_directory').'/'.$this->getUser()->getId().'/'.$app->getId(
+                        ).'/'.$screenshot->getFilename()
+                    );
+                }catch (\Exception $e){}
+                $this->entityManager->remove($screenshot);
+            }
+            rmdir($this->getParameter('screenshots_directory').'/'.$this->getUser()->getId().'/'.$app->getId());
+
+            unlink($this->getParameter('cover_directory').'/'.$this->getUser()->getId().'/'.$app->getCover());
+
+            $this->entityManager->remove($app);
+            $this->entityManager->flush();
+
+            return new JsonResponse(['success' => 1]);
+        }else {
+            return new JsonResponse(['error' => 'Token invalide'], 400);
         }
     }
 }

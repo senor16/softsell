@@ -3,8 +3,8 @@
 {% block title %}Apps{% endblock %}
 
 {% block body %}
-    <div class="row">
-        {% for application in applications %}
+    {% for application in applications %}
+        <div class="row">
             <div class="col-3">
 
                 {% if (application.cover is null or application.cover =='-') %}
@@ -15,23 +15,52 @@
                                 src="{{ asset('uploads/images/'~application.developer.id~'/'~application.cover) }}"
                                 alt="Cover {{ application.title }}"/></a>
                 {% endif %}
-
-                <br/>
-                <h4><a href="{{ path('application_show',{slug:application.slug}) }}"> {{ application.title }}</a>
+            </div>
+            <div class="col">
+                <h4 style="display: inline"><a
+                            href="{{ path('application_show',{slug:application.slug}) }}"> {{ application.title }}</a>
+                </h4>
+                <div class="row">
+                    <div class="col-1">
+                        <a href="{{ path('application_edit',{slug:application.slug}) }}">Modifier</a>
+                    </div>
+                    <div class="col-1">
+                        <a style="color: red" data-delete data-token="{{ csrf_token('application'~application.id) }}" id="application_delete"
+                           href="{{ path('application_delete',{slug:application.slug}) }}">Supprimer</a><br/>
+                    </div>
+                </div>
+                <div style="font-size: 1.3em;" class="row">
+                    <div class="col-2">
+                        <i class="fa fa-download"></i> : {{ application.getTotalDownloads() }}
+                    </div>
                     {% for executable in application.executables %}
                         {% if executable.platform == 'Windows' %}
-                            <i class="fab fa-windows"></i>
+                            <div class="col-2">
+                                <i class="fab fa-windows"></i> : {{ executable.downloads }}
+                            </div>
                         {% elseif executable.platform == "Mac" %}
-                            <i class="fab fa-apple"></i>
+                            <div class="col-2">
+                                <i class="fab fa-apple"></i> : {{ executable.downloads }}
+                            </div>
                         {% elseif executable.platform == "Linux" %}
-                            <i class="fab fa-linux"></i>
+                            <div class="col-2">
+                                <i class="fab fa-linux"></i> : {{ executable.downloads }}
+                            </div>
                         {% elseif executable.platform == "Android" %}
-                            <i class="fab fa-android"></i>
+                            <div class="col-2">
+                                <i class="fab fa-android"></i> : {{ executable.downloads }}
+                            </div>
                         {% endif %}
                     {% endfor %}
-                </h4>
+                </div>
+
                 {{ application.shortDescription }}
             </div>
-        {% endfor %}
-    </div>
+        </div>
+    {% endfor %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/screenshots.js') }}"></script>
 {% endblock %}

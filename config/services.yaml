@@ -6,6 +6,7 @@
 parameters:
   screenshots_directory: '%kernel.project_dir%/public/uploads/images'
   executables_directory: '%kernel.project_dir%/public/uploads/files'
+  cover_directory: '%kernel.project_dir%/public/uploads/images'
   executables_download: 'https://localhost:8000/uploads/files'
 
 
