@@ -24,26 +24,26 @@
             aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
-
-    <div class="collapse navbar-collapse" id="navbarColor01">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="{{ path('dashboard') }}">Console<span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ path('application_new') }}">Ajouter une application</a>
-            </li>
-            {% if not app.user %}
-                <li class="nav-item">
-                    <a href="{{ path('app_login') }}" class="nav-link">Connexion</a>
-                </li>
-            {% else %}
-                <li class="nav-item">
-                    <a href="{{ path('app_logout') }}" class="nav-link">Déconexion</a>
-                </li>
-            {% endif %}
-        </ul>
-    </div>
+    {% if is_granted('ROLE_USER') %}
+        <li class="dropdown">
+            <li class="dropdown-toggle" data-toggle="dropdown">{{ app.user.username }} <span class="caret"></span></li>
+            <ul class="dropdown-menu">
+                <li><a href="">Profil</a></li>
+                <li><a href="">Application téléchargées</a></li>
+                {% if is_granted('ROLE_DEVELOPER') %}
+                    <li class="divider"></li>
+                    <li><a href="{{ path('dashboard') }}">Console</a></li>
+                    <li><a href="{{ path('application_new') }}">Ajouter une application</a></li>
+                {% endif %}
+                <li><a href="">Paramètres</a></li>
+                <li><a href="{{ path('app_logout') }}">Déconexion</a></li>
+            </ul>
+        </li>
+    {% else %}
+        <li class="nav-item">
+            <a href="{{ path('app_login') }}" class="nav-link">Connexion</a>
+        </li>
+    {% endif %}
 </nav>
 <div class="container">
     {% block body %}{% endblock %}
