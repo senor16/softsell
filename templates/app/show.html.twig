@@ -26,7 +26,7 @@
                 <h3><i class="fas fa-download"></i> Télécharger ( <span
                             class="js-downloads">{{ application.getTotalDownloads() }}</span> fois)</h3>
                 {% for executable in application.executables %}
-                    <a href="{{path('application_download', {slug:application.slug, platform:executable.platform})}}">{{ application.slug~'.'~executable.name|split('.')|last }}
+                    <a href="{{ path('application_download', {slug:application.slug, platform:executable.platform}) }}">{{ application.slug~'.'~executable.name|split('.')|last }}
                         ({{ executable.platform }}) </a> : {{ executable.showSize }}
                     <div style="font-size: 1.3em; display: inline;">
                         {% if executable.platform == 'Windows' %}
@@ -63,12 +63,14 @@
                             {{ comment.text }}
                         </p>
                     {% endfor %}
-                    {% if previous >= 0 %}
-                        <a href="{{ path('application_show', {slug:application.slug, offset:previous}) }}">Précédent</a>
-                    {% endif %}
-                    {% if next < comments|length %}
-                        <a href="{{ path('application_show', {slug:application.slug, offset:next}) }}">Suivant</a>
-                    {% endif %}
+                    <p>
+                        {% if previous >= 0 %}
+                            <a href="{{ path('comment_show', {slug:application.slug, offset:previous}) }}">Précédent</a>
+                        {% endif %}
+                        {% if next < comments|length %}
+                            <a href="{{ path('comment_show', {slug:application.slug, offset:next}) }}">Suivant</a>
+                        {% endif %}
+                    </p>
                 {% else %}
                     <h3>Aucun commentaire n'a été publiée.</h3>
                 {% endif %}

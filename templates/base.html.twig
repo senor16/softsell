@@ -10,41 +10,68 @@
     {% block stylesheets %}
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Spartan&display=swap">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-        {#        <link rel="stylesheet" href="https://bootswatch.com/4/flatly/bootstrap.min.css">#}
+        <link rel="stylesheet" href="https://bootswatch.com/4/flatly/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
               integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous"/>
         <link rel="stylesheet" href="{{ asset('css/app.css') }}"/>
     {% endblock %}
 </head>
 <body>
-<span class="position-absolute trigger"></span>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <a class="navbar-brand" href="{{ path('home') }}">Jakpaa</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01"
             aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
-    {% if is_granted('ROLE_USER') %}
-        <li class="dropdown">
-            <li class="dropdown-toggle" data-toggle="dropdown">{{ app.user.username }} <span class="caret"></span></li>
-            <ul class="dropdown-menu">
-                <li><a href="">Profil</a></li>
-                <li><a href="">Application téléchargées</a></li>
-                {% if is_granted('ROLE_DEVELOPER') %}
-                    <li class="divider"></li>
-                    <li><a href="{{ path('dashboard') }}">Console</a></li>
-                    <li><a href="{{ path('application_new') }}">Ajouter une application</a></li>
-                {% endif %}
-                <li><a href="">Paramètres</a></li>
-                <li><a href="{{ path('app_logout') }}">Déconexion</a></li>
-            </ul>
-        </li>
-    {% else %}
-        <li class="nav-item">
-            <a href="{{ path('app_login') }}" class="nav-link">Connexion</a>
-        </li>
-    {% endif %}
+
+    <div class="collapse navbar-collapse" id="navbarColor01">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="{{ path('home') }}">Accueil <span class="sr-only">(current)</span></a>
+            </li>
+            {% if is_granted('ROLE_USER') %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                       aria-haspopup="true"
+                       aria-expanded="false">{{app.user.firstname}}</a>
+                    <div class="dropdown-menu">
+
+
+                        <a class="dropdown-item" href="{{ path('application_library') }}">Ma Librairie</a>
+                        <a class="dropdown-item" href="{{ path('application_recommendations') }}">Recommendations</a>
+                        {% if is_granted('ROLE_DEVELOPER') %}
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{{ path('dashboard') }}">Console</a>
+                            <a class="dropdown-item" href="{{ path('application_new') }}">Ajouter une application</a>
+                        {% endif %}
+                        <a class="dropdown-item" href="{{ path('user_profile') }}">Profil</a>
+                        <a class="dropdown-item" href="{{ path('user_settings') }}">Paramètres</a>
+                        <a class="dropdown-item" href="{{ path('app_logout') }}">Déconexion</a>
+
+                    </div>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_login') }}">Connexion</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('security_user_sign_up') }}">Inscription</a>
+                </li>
+
+            {% endif %}
+            <li class="nav-item">
+                <a class="nav-link" href="#">À propos</a>
+            </li>
+
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="text" placeholder="Search">
+            <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+        </form>
+    </div>
 </nav>
+
+
 <div class="container">
     {% block body %}{% endblock %}
 </div>

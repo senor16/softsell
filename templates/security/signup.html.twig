@@ -1,5 +1,4 @@
 {% extends 'base.html.twig' %}
-{#{% form_theme sign_up_form 'bootstrap_4_layout.html.twig' %}#}
 {% block title %}Inscription{% endblock %}
 
 {% block body %}
@@ -36,7 +35,10 @@
 
         {{ form_row(sign_up_form.gender, {
             'label': 'Vous êtes un(e)',
-            'placeholder' : 'Choississez un genre'
+            'placeholder' : 'Choississez un genre',
+            attr:{
+                class: 'custom-select'
+            }
         }) }}
 
         {{ form_row(sign_up_form.username, {

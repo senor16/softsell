@@ -6,6 +6,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\UserRegistrationType;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,6 +15,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class SecurityController extends AbstractController
 {
@@ -127,4 +131,32 @@ class SecurityController extends AbstractController
             'This method can be blank - it will be intercepted by the logout key on your firewall.'
         );
     }
+
+    /**
+     * @return Response
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     * @IsGranted("ROLE_USER")
+     * @Route("/profile", name="user_profile")
+     */
+    public function profile():Response{
+        return new Response($this->twig->render('security/profile.html.twig'));
+
+    }
+
+    /**
+     * @return Response
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     * @IsGranted("ROLE_USER")
+     * @Route("/settings", name="user_settings")
+     */
+    public function settings():Response{
+        return new Response($this->twig->render('security/settings.html.twig'));
+
+    }
+
+
 }

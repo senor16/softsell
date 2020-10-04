@@ -1,5 +1,4 @@
 {% extends 'base.html.twig' %}
-{% form_theme application_form 'bootstrap_4_layout.html.twig' %}
 {% block title %}
     {% if(edit_mode) %}
         Modifier les informations de l'application
@@ -8,13 +7,23 @@
     {% endif %}
 {% endblock %}
 {% block body %}
-    <h1>
-        {% if(edit_mode) %}
-            Modifier les informations de l'application
-        {% else %}
-            Ajouter une nouvelle application
-        {% endif %}
-    </h1>
+
+    {% if(edit_mode) %}
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">Console</a></li>
+            <li class="breadcrumb-item"><a
+                        href="{{ path('application_show',{slug: application.slug}) }}">{{ application.title }}</a></li>
+            <li class="breadcrumb-item active">Modifier</li>
+        </ol>
+        <h1> Modifier les informations de l'application</h1>
+    {% else %}
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('dashboard') }}">Console</a></li>
+            <li class="breadcrumb-item active">Ajouter</li>
+        </ol>
+        <h1>Ajouter une nouvelle application</h1>
+    {% endif %}
+
 
     {{ form_start (application_form) }}
     <div class="row">
@@ -47,9 +56,9 @@
                 }
             }) }}
 
-            {{ form_row(application_form.classification) }}
+            {{ form_row(application_form.classification,{attr: {class: 'custom-select'}}) }}
 
-            {{ form_row(application_form.genre) }}
+            {{ form_row(application_form.genre, {attr: {class:'custom-select'}}) }}
 
             <p>Plateformes supportées :</p>
             <div class="row">
@@ -58,73 +67,72 @@
                     {% set l ='' %}
                     {% set m ='' %}
                     {% set a ='' %}
+
+
+
                     {% for executable in application.executables %}
                         {% if executable.platform == 'Windows' %}
                             <div class="col">
-                                {{ form_row(application_form.windows, {'attr':{'checked':true}}) }}
+                                {{ form_row(application_form.windows, {attr:{'checked':true}, label_attr: {class: 'checkbox-custom'}}) }}
                             </div>
                             {% set w = 'w' %}
                         {% endif %}
 
-                        {% if executable.platform == "Mac" %}
-                            <div class="col">
-                                {{ form_row(application_form.mac, {'attr':{'checked':true}}) }}
-                            </div>
-                            {% set m = 'm' %}
-                        {% endif %}
-
-
                         {% if executable.platform == "Linux" %}
                             <div class="col">
-                                {{ form_row(application_form.linux, {'attr':{'checked':true}}) }}
+                                {{ form_row(application_form.linux, {'attr':{'checked':true}, label_attr: {class: 'checkbox-custom'}}) }}
                             </div>
                             {% set l = 'l' %}
                         {% endif %}
 
+                        {% if executable.platform == "Mac" %}
+                            <div class="col">
+                                {{ form_row(application_form.mac, {'attr':{'checked':true}, label_attr: {class: 'checkbox-custom'}}) }}
+                            </div>
+                            {% set m = 'm' %}
+                        {% endif %}
 
                         {% if executable.platform == "Android" %}
                             <div class="col">
-                                {{ form_row(application_form.android, {'attr':{'checked':true}}) }}
+                                {{ form_row(application_form.android, {'attr':{'checked':true}, label_attr: {class: 'checkbox-custom'}}) }}
                             </div>
                             {% set a = 'a' %}
 
                         {% endif %}
                     {% endfor %}
 
-
-
                     {% if w != 'w' %}
                         <div class="col">
-                            {{ form_row(application_form.windows) }}
+                            {{ form_row(application_form.windows, {label_attr: {class: 'checkbox-custom'}}) }}
                         </div>
                     {% endif %}
                     {% if l != 'l' %}
                         <div class="col">
-                            {{ form_row(application_form.linux) }}
+                            {{ form_row(application_form.linux, {label_attr: {class: 'checkbox-custom'}}) }}
                         </div>
                     {% endif %}
                     {% if m != 'm' %}
                         <div class="col">
-                            {{ form_row(application_form.mac) }}
+                            {{ form_row(application_form.mac, {label_attr: {class: 'checkbox-custom'}}) }}
                         </div>
                     {% endif %}
                     {% if a != 'a' %}
                         <div class="col">
-                            {{ form_row(application_form.android) }}
+                            {{ form_row(application_form.android, {label_attr: {class: 'checkbox-custom'}}) }}
                         </div>
                     {% endif %}
                 {% else %}
                     <div class="col">
-                        {{ form_row(application_form.windows) }}
+                        {{ form_row(application_form.windows, {label_attr: {class: 'checkbox-custom'}}) }}
                     </div>
                     <div class="col">
-                        {{ form_row(application_form.linux) }}
+                        {{ form_row(application_form.linux, {label_attr: {class: 'checkbox-custom'}}) }}
                     </div>
                     <div class="col">
-                        {{ form_row(application_form.mac) }}
+                        {{ form_row(application_form.mac, {label_attr: {class: 'checkbox-custom'}}) }}
                     </div>
                     <div class="col">
-                        {{ form_row(application_form.android) }}
+                        {{ form_row(application_form.android, {label_attr: {class: 'checkbox-custom'}}) }}
                     </div>
                 {% endif %}
             </div>
@@ -191,7 +199,7 @@
             </div>
 
 
-            {{ form_row(application_form.isReleased,{'label':'Rendre l\'application visible par tous'}) }}
+            {{ form_row(application_form.isReleased,{'label':'Rendre l\'application visible par tous', label_attr:{class: 'switch-custom'}}) }}
 
             <button type="submit" class="btn btn-success">Enregistrer</button>
             <p></p>

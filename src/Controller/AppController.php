@@ -7,6 +7,7 @@ use App\Entity\AppDownload;
 use App\Entity\Comment;
 use App\Entity\Executable;
 use App\Entity\Screenshot;
+use App\Entity\User;
 use App\Form\AppFormType;
 use App\Form\CommentFormType;
 use App\Repository\AppDownloadRepository;
@@ -18,10 +19,14 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class AppController extends AbstractController
 {
@@ -55,10 +60,10 @@ class AppController extends AbstractController
      * @Route("/{slug}/edit" ,name="application_edit" ,priority=-10)
      * @param App|null $application
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
-     * @throws \Twig\Error\LoaderError
-     * @throws \Twig\Error\RuntimeError
-     * @throws \Twig\Error\SyntaxError
+     * @return RedirectResponse|Response
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function form(App $application = null, Request $request, ExecutableRepository $executableRepository)
     {
@@ -254,10 +259,10 @@ class AppController extends AbstractController
      * @param Request $request
      * @param App $application
      * @param CommentRepository $commentRepository
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
-     * @throws \Twig\Error\LoaderError
-     * @throws \Twig\Error\RuntimeError
-     * @throws \Twig\Error\SyntaxError
+     * @return RedirectResponse|Response
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function show(Request $request, App $application, CommentRepository $commentRepository)
     {
@@ -410,6 +415,7 @@ class AppController extends AbstractController
      * @param Request $request
      * @IsGranted("ROLE_DEVELOPER")
      * @Route("{slug}/delete", name="application_delete", methods={"DELETE"})
+     * @return JsonResponse
      */
     public function deleteApp(App $app, Request $request)
     {
@@ -447,5 +453,33 @@ class AppController extends AbstractController
             return new JsonResponse(['error' => 'Token invalide'], 400);
         }
     }
+
+    /**
+     * @IsGranted("ROLE_USER")
+     * @return Response
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     * @Route("/library", name="application_library")
+     */
+    public function library():Response{
+
+        return new Response($this->twig->render('app/library.html.twig'));
+    }
+
+    /**
+     * @IsGranted("ROLE_USER")
+     * @return Response
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     * @Route("/recommendations", name="application_recommendations")
+     */
+    public function recommendations():Response{
+
+        return new Response($this->twig->render('app/recommendations.html.twig'));
+    }
+
+
 }
 

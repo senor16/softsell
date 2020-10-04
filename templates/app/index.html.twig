@@ -3,10 +3,12 @@
 {% block title %}Apps{% endblock %}
 
 {% block body %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active">Console</li>
+    </ol>
     {% for application in applications %}
         <div class="row">
             <div class="col-3">
-
                 {% if (application.cover is null or application.cover =='-') %}
                     <a href="{{ path('application_show',{slug:application.slug}) }}"> <img
                                 src="https://via.placeholder.com/350x250" alt="cover"/></a>
