@@ -14,6 +14,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Image;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
 
@@ -104,6 +105,9 @@ class AppFormType extends AbstractType
                     'download_label' => 'Télécharger',
                     'delete_label' => 'Supprimer',
                     'asset_helper' => true,
+                    'constraints' => [
+                        new Image(['maxSize' => '2048k']),
+                    ],
                 ]
             )
             ->add(
@@ -125,7 +129,7 @@ class AppFormType extends AbstractType
                     'choice_label' => 'getFr',
                 ]
             )
-        ->add('isReleased');
+            ->add('isReleased');
 
         $builder->get('classification')->addEventListener(
             FormEvents::POST_SUBMIT,

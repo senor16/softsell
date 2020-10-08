@@ -480,6 +480,12 @@ class AppController extends AbstractController
         return new Response($this->twig->render('app/recommendations.html.twig'));
     }
 
-
+    /**
+     * @return Response
+     * @Route("/search/{search}", name="apllication_search")
+     */
+    public function search($search, AppRepository $appRepository):Response{
+        return new Response($this->twig->render('app/search.html.twig'));
+    }
 }
 
