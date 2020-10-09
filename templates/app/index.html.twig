@@ -13,8 +13,9 @@
                     <a href="{{ path('application_show',{slug:application.slug}) }}"> <img
                                 src="https://via.placeholder.com/350x250" alt="cover"/></a>
                 {% else %}
+                    {% set cover_mini = application.cover|split('.')|first %}
                     <a href="{{ path('application_show',{slug:application.slug}) }}"><img
-                                src="{{ asset('uploads/images/'~application.developer.id~'/'~application.cover) }}"
+                                src="{{ asset('uploads/images/'~application.developer.id~'/'~application.id~'/'~cover_mini~'-mini.'~application.cover|split('.')|last) }}"
                                 alt="Cover {{ application.title }}"/></a>
                 {% endif %}
             </div>

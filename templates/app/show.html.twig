@@ -7,8 +7,8 @@
         <p><a href="https://via.placeholder.com/350x250"> <img src="https://via.placeholder.com/350x250"
                                                                alt="cover"/></a></p>
     {% else %}
-        <p><a href="{{ asset('uploads/images/'~application.developer.id~'/'~application.cover) }}"> <img
-                        src="{{ asset('uploads/images/'~application.developer.id~'/'~application.cover) }}"
+        <p><a href="{{ asset('uploads/images/'~application.developer.id~'/'~application.id~'/'~application.cover) }}"> <img
+                        src="{{ asset('uploads/images/'~application.developer.id~'/'~application.id~'/'~application.cover) }}"
                         alt="cover"/></a></p>
     {% endif %}
     <div class="row">
@@ -21,7 +21,7 @@
             <h5>Autheur
                 <b>: {{ application.developer.firstName ~' '~ application.developer.lastName }}</b>
                 <small>({{ application.developer.email }})</small></h5>
-            <p><h4>Description :</h4>{{ application.description }}</p>
+            <p><h4>Description :</h4>{{ application.description|raw }}</p>
             {% if application.executables|length >0 %}
                 <h3><i class="fas fa-download"></i> Télécharger ( <span
                             class="js-downloads">{{ application.getTotalDownloads() }}</span> fois)</h3>
@@ -82,7 +82,7 @@
                         'attr' : {
                             'placeholder' : 'Tapez votre commentaire'
                         }
-                    }) }}
+                    })|raw }}
 
                     <button type="submit" class="btn btn-success">Envoyer</button>
                     {{ form_end(comment_form) }}
@@ -93,7 +93,7 @@
                 {% endif %}
             </div>
         </div>
-        <div class="col-4">
+        <div class="col-4" style="text-align: center;">
             {% if application.screenshots|length > 0 %}
                 <h4>Captures d'écran</h4>
                 {% for screenshot in application.screenshots %}
@@ -104,7 +104,7 @@
                         <p>
                             <a href="{{ asset('uploads/images/'~application.developer.id~'/'~application.id~'/'~screenshot.filename) }}">
                                 <img
-                                        src="{{ asset('uploads/images/'~application.developer.id~'/'~application.id~'/'~screenshot.filename) }}"
+                                        src="{{ asset('uploads/images/'~application.developer.id~'/'~application.id~'/'~screenshot.mini) }}"
                                         alt="Screenshot {{ application.title }}"/></a></p>
                     {% endif %}
                 {% endfor %}

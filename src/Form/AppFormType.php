@@ -15,7 +15,8 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Image;
-use Vich\UploaderBundle\Form\Type\VichImageType;
+
+
 
 
 class AppFormType extends AbstractType
@@ -97,14 +98,9 @@ class AppFormType extends AbstractType
             )
             ->add(
                 'coverFile',
-                VichImageType::class,
+                FileType::class,
                 [
                     'required' => false,
-                    'allow_delete' => true,
-                    'download_uri' => true,
-                    'download_label' => 'Télécharger',
-                    'delete_label' => 'Supprimer',
-                    'asset_helper' => true,
                     'constraints' => [
                         new Image(['maxSize' => '2048k']),
                     ],
@@ -123,7 +119,7 @@ class AppFormType extends AbstractType
                 'classification',
                 EntityType::class,
                 [
-                    'placeholder' => 'Choississez une classification',
+                    'placeholder' => 'Choisissez une classification',
                     'class' => Classification::class,
                     'choice_value' => 'getId',
                     'choice_label' => 'getFr',

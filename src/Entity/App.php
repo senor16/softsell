@@ -10,12 +10,10 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 
 /**
  * @ORM\Entity(repositoryClass=AppRepository::class)
- * @Vich\Uploadable
  * @UniqueEntity("slug")
  */
 class App
@@ -55,17 +53,12 @@ class App
 
 
     /**
-     * @Vich\UploadableField(mapping="application_images_upload", fileNameProperty="cover")
-     * @var File|null
-     *
-     */
-    private $coverFile;
-
-    /**
      * @ORM\Column(type="string", length=255)
      * @var string|null
      */
     private $cover;
+
+    private $coverFile;
 
 
     /**
@@ -338,27 +331,6 @@ class App
     }
 
 
-    /**
-     * @return File|null
-     */
-    public function getCoverFile(): ?File
-    {
-        return $this->coverFile;
-    }
-
-    /**
-     * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile|null
-     */
-    public function setCoverFile(?File $coverFile): void
-    {
-        $this->coverFile = $coverFile;
-
-        if (null !== $coverFile) {
-            $this->updatedAt = new \DateTimeImmutable();
-        }
-    }
-
-
     public function getCover()
     {
         return $this->cover;
@@ -370,6 +342,15 @@ class App
         $this->cover = $cover;
     }
 
+    public function getCoverFile()
+    {
+        return $this->coverFile;
+    }
+
+    public function setCoverFile(File $coverFile): void
+    {
+        $this->coverFile = $coverFile;
+    }
 
     public function getUpdatedAt(): ?\DateTimeInterface
     {
@@ -573,6 +554,7 @@ class App
                 $download->setApp(null);
             }
         }
+
         return $this;
     }
 
@@ -617,5 +599,6 @@ class App
 
         return $this;
     }
+
 
 }

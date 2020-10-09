@@ -4,12 +4,9 @@ namespace App\Entity;
 
 use App\Repository\ScreenshotRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @ORM\Entity(repositoryClass=ScreenshotRepository::class)
- * @Vich\Uploadable
  */
 class Screenshot
 {
@@ -38,6 +35,11 @@ class Screenshot
      * @ORM\ManyToOne(targetEntity=App::class, inversedBy="screenshots")
      */
     private $app;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $mini;
 
     public function getId(): ?int
     {
@@ -76,6 +78,18 @@ class Screenshot
     public function setApp(?App $app): self
     {
         $this->app = $app;
+
+        return $this;
+    }
+
+    public function getMini(): ?string
+    {
+        return $this->mini;
+    }
+
+    public function setMini(string $mini): self
+    {
+        $this->mini = $mini;
 
         return $this;
     }

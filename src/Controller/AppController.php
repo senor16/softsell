@@ -60,6 +60,7 @@ class AppController extends AbstractController
      * @Route("/{slug}/edit" ,name="application_edit" ,priority=-10)
      * @param App|null $application
      * @param Request $request
+     * @param ImageOptimizer $imageOptimizer
      * @return RedirectResponse|Response
      * @throws LoaderError
      * @throws RuntimeError
@@ -68,7 +69,6 @@ class AppController extends AbstractController
     public function form(
         App $application = null,
         Request $request,
-        ExecutableRepository $executableRepository,
         ImageOptimizer $imageOptimizer
     ) {
         if (!$application) {
@@ -81,17 +81,20 @@ class AppController extends AbstractController
 
         $form = $this->createForm(AppFormType::class, $application);
         $form->handleRequest($request);
+        dump($form->getData());
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $screenshots = $form->get('screenshotsFile')->getData();
 
+            $screenshots = $form->get('screenshotsFile')->getData();
+            $cover = $form->getData()->getCoverFile();
 
             if (!$application->getId()) {
-                $application->setCreatedAt(new \DateTime());
-
-                $application->setPrice(0);
-                $application->setViews(0);
-                $application->setDeveloper($this->getUser());
+                $application->setCreatedAt(new \DateTime())
+                    ->setPrice(0)
+                    ->setViews(0)
+                    ->setDeveloper($this->getUser())
+                    ->setCover('-');
+                $application->setUpdatedAt(new \DateTime());
             }
             $this->entityManager->persist($application);
             $this->entityManager->flush();
@@ -102,18 +105,42 @@ class AppController extends AbstractController
                 mkdir($destination);
             } catch (\Exception $e) {
             }
-
-            foreach ($screenshots as $screenshot) {
-                $screenshotname = bin2hex(random_bytes(12)).'.'.$screenshot->guessExtension();
+            if ($cover) {
+                $name = bin2hex(random_bytes(12));
+                $coverName = $name.'.'.$cover->guessExtension();
+                $coverMiniName = $name.'-mini.'.$cover->guessExtension();
                 try {
-                    $screenshot->move($destination, $screenshotname);
-                    $imageOptimizer->resize($destination.'/'.$screenshotname);
+                    $cover->move($destination, $coverName);
+                    $imageOptimizer->resize(
+                        $destination.'/'.$coverName,
+                        $destination.'/'.$coverMiniName,
+                        'cover'
+                    );
+                } catch (\Exception $e) {
+                }
+                $application->setCover($coverName);
+
+//                $this->entityManager->persist($application);
+//                $this->entityManager->flush();
+            }
+            foreach ($screenshots as $screenshot) {
+                $name = bin2hex(random_bytes(12));
+                $screenshotName = $name.'.'.$screenshot->guessExtension();
+                $screenshotMiniName = $name.'-mini.'.$screenshot->guessExtension();
+                try {
+                    $screenshot->move($destination, $screenshotName);
+                    $imageOptimizer->resize(
+                        $destination.'/'.$screenshotName,
+                        $destination.'/'.$screenshotMiniName,
+                        'screenshot'
+                    );
                 } catch (\Exception $e) {
                 }
 
                 $screen = new Screenshot();
-                $screen->setFilename($screenshotname);
-                $screen->setUpdatedAt(new \DateTime());
+                $screen->setFilename($screenshotName)
+                    ->setMini($screenshotMiniName)
+                    ->setUpdatedAt(new \DateTime());
 
                 $application->addScreenshot($screen);
             }
@@ -320,6 +347,12 @@ class AppController extends AbstractController
                 ).'/'.$screenshot->getApp()->getId().'/'.$screenshot->getFilename()
             );
 
+            unlink(
+                $this->getParameter('screenshots_directory').'/'.$screenshot->getApp()->getDeveloper()->getId(
+                ).'/'.$screenshot->getApp()->getId().'/'.$screenshot->getMini()
+            );
+
+
             $this->entityManager->remove($screenshot);
             $this->entityManager->flush();
 
@@ -360,7 +393,7 @@ class AppController extends AbstractController
      * @param ExecutableRepository $executableRepository
      * @param $platform
      * @return Response
-     * @Route(" /{slug}/download/{platform}", name="application_download")
+     * @Route("/{slug}/download/{platform}", name="application_download")
      * @throws \Exception
      */
     public function download(
@@ -435,7 +468,10 @@ class AppController extends AbstractController
                 }
                 $this->entityManager->remove($executable);
             }
-            rmdir($this->getParameter('executables_directory').'/'.$this->getUser()->getId().'/'.$app->getId());
+            try {
+                rmdir($this->getParameter('executables_directory').'/'.$this->getUser()->getId().'/'.$app->getId());
+            } catch (\Exception $e) {
+            }
 
             foreach ($app->getScreenshots() as $screenshot) {
                 try {
@@ -447,9 +483,15 @@ class AppController extends AbstractController
                 }
                 $this->entityManager->remove($screenshot);
             }
-            rmdir($this->getParameter('screenshots_directory').'/'.$this->getUser()->getId().'/'.$app->getId());
+            try {
+                rmdir($this->getParameter('screenshots_directory').'/'.$this->getUser()->getId().'/'.$app->getId());
+            } catch (\Exception $e) {
+            }
 
+            try {
             unlink($this->getParameter('cover_directory').'/'.$this->getUser()->getId().'/'.$app->getCover());
+            } catch (\Exception $e) {
+            }
 
             $this->entityManager->remove($app);
             $this->entityManager->flush();

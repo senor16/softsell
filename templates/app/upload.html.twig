@@ -209,6 +209,10 @@
             {{ form_row(application_form.coverFile, {
                 'label':'Image de couverture'
             }) }}
+            {% if edit_mode %}
+                <img src="{{ asset('uploads/images/'~application.developer.id~'/'~application.id~'/'~application.cover|split('.')|first~'-mini.'~application.cover|split('.')|last) }}"
+                        alt="Cover {{ application.title }}"/><br/>
+            {% endif %}
 
             {{ form_row(application_form.screenshotsFile, {
                 'label':'Captures d\'écran'
@@ -226,9 +230,9 @@
 
                             <a href="{{ asset('uploads/images/'~application.developer.id~'/'~application.id~'/'~screenshot.filename) }}">
 
-                                <img src="{{ asset('uploads/images/'~application.developer.id~'/'~application.id~'/'~screenshot.filename) }}"
+                                <img src="{{ asset('uploads/images/'~application.developer.id~'/'~application.id~'/'~screenshot.mini) }}"
                                      alt="Screenshot {{ application.title }}"/>
-                            </a>
+                            </a><br/>
                             <a href="{{ path('application_delete_screenshot', {id: screenshot.id}) }}"
                                data-delete data-token="{{ csrf_token('screenshot'~screenshot.id) }}"
                                style="color: red;">

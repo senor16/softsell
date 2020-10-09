@@ -13,7 +13,7 @@
                                         src="https://via.placeholder.com/350x250" alt="cover"/></a>
                     {% else %}
                         <a href="{{ path('application_show',{slug:application.slug}) }}"><img
-                                    src="{{ asset('uploads/images/'~application.developer.id~'/'~application.cover) }}"
+                                    src="{{ asset('uploads/images/'~application.developer.id~'/'~application.id~'/'~application.cover|split('.')|first~'-mini.'~application.cover|split('.')|last) }}"
                                     alt="Cover {{ application.title }}"/></a>
                     {% endif %}
 
