@@ -7,9 +7,9 @@ use App\Entity\AppDownload;
 use App\Entity\Comment;
 use App\Entity\Executable;
 use App\Entity\Screenshot;
-use App\Entity\User;
 use App\Form\AppFormType;
 use App\Form\CommentFormType;
+use App\ImageOptimizer;
 use App\Repository\AppDownloadRepository;
 use App\Repository\AppRepository;
 use App\Repository\CommentRepository;
@@ -65,8 +65,12 @@ class AppController extends AbstractController
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    public function form(App $application = null, Request $request, ExecutableRepository $executableRepository)
-    {
+    public function form(
+        App $application = null,
+        Request $request,
+        ExecutableRepository $executableRepository,
+        ImageOptimizer $imageOptimizer
+    ) {
         if (!$application) {
             $application = new App();
         } else {
@@ -101,9 +105,9 @@ class AppController extends AbstractController
 
             foreach ($screenshots as $screenshot) {
                 $screenshotname = bin2hex(random_bytes(12)).'.'.$screenshot->guessExtension();
-
                 try {
                     $screenshot->move($destination, $screenshotname);
+                    $imageOptimizer->resize($destination.'/'.$screenshotname);
                 } catch (\Exception $e) {
                 }
 
@@ -427,7 +431,8 @@ class AppController extends AbstractController
                         $this->getParameter('executables_directory').'/'.$this->getUser()->getId().'/'.$app->getId(
                         ).'/'.$executable->getName()
                     );
-                }catch (\Exception $e){}
+                } catch (\Exception $e) {
+                }
                 $this->entityManager->remove($executable);
             }
             rmdir($this->getParameter('executables_directory').'/'.$this->getUser()->getId().'/'.$app->getId());
@@ -438,7 +443,8 @@ class AppController extends AbstractController
                         $this->getParameter('screenshots_directory').'/'.$this->getUser()->getId().'/'.$app->getId(
                         ).'/'.$screenshot->getFilename()
                     );
-                }catch (\Exception $e){}
+                } catch (\Exception $e) {
+                }
                 $this->entityManager->remove($screenshot);
             }
             rmdir($this->getParameter('screenshots_directory').'/'.$this->getUser()->getId().'/'.$app->getId());
@@ -449,7 +455,7 @@ class AppController extends AbstractController
             $this->entityManager->flush();
 
             return new JsonResponse(['success' => 1]);
-        }else {
+        } else {
             return new JsonResponse(['error' => 'Token invalide'], 400);
         }
     }
@@ -462,7 +468,8 @@ class AppController extends AbstractController
      * @throws SyntaxError
      * @Route("/library", name="application_library")
      */
-    public function library():Response{
+    public function library(): Response
+    {
 
         return new Response($this->twig->render('app/library.html.twig'));
     }
@@ -475,16 +482,19 @@ class AppController extends AbstractController
      * @throws SyntaxError
      * @Route("/recommendations", name="application_recommendations")
      */
-    public function recommendations():Response{
+    public function recommendations(): Response
+    {
 
         return new Response($this->twig->render('app/recommendations.html.twig'));
     }
 
     /**
      * @return Response
-     * @Route("/search/{search}", name="apllication_search")
+     * @Route("/search", name="apllication_search")
      */
-    public function search($search, AppRepository $appRepository):Response{
+    public function search(Request $request, AppRepository $appRepository): Response
+    {
+
         return new Response($this->twig->render('app/search.html.twig'));
     }
 }

@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-<file source-language="en" datatype="plaintext" original="file.ext">
-<body>
-<trans-unit id="Invalid credentials.">
-<source>Invalid credentials.</source>
-<target>Le mot de passe est invalide</target>
-</trans-unit>
-<trans-unit id="Username could not be found.">
-<source>Username could not be found.</source>
-<target>Nom d'utilisateur non-trouvé</target>
-</trans-unit>
-</body>
-</file>
+    <file source-language="en" datatype="plaintext" original="file.ext">
+        <body>
+            <trans-unit id="Invalid credentials.">
+                <source>Invalid credentials.</source>
+                <target>Le mot de passe est invalide</target>
+            </trans-unit>
+            <trans-unit id="Username could not be found.">
+                <source>Username could not be found.</source>
+                <target>Nom d'utilisateur non-trouvé</target>
+            </trans-unit>
+        </body>
+    </file>
 </xliff>
