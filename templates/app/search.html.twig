@@ -4,9 +4,60 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item active">Recherche</li>
     </ol>
+    {% if error is not defined %}
+        {% set nombre_resultat = applications|length %}
+        {% if nombre_resultat > 0 %}
+            <h3>Nous avons trouvés
+                {% if nombre_resultat >1 %}{{ nombre_resultat }} applications{% else %}une application{% endif %}
+                correspondant à "{{ query }}"</h3>
+            <div class="row">
+                {% for application in applications %}
+                    <div class="col-3">
+
+                        {% if (application.cover is null or application.cover =='-') %}
+                            <a href="{{ path('application_show',{slug:application.slug}) }}"> <img
+                                        src="https://via.placeholder.com/350x250" alt="cover"/></a>
+                        {% else %}
+                            <a href="{{ path('application_show',{slug:application.slug}) }}"><img
+                                        src="{{ asset('uploads/images/'~application.developer.id~'/'~application.id~'/'~application.cover|split('.')|first~'-mini.'~application.cover|split('.')|last) }}"
+                                        alt="Cover {{ application.title }}"/></a>
+                        {% endif %}
+
+                        <br/>
+                        <h4><a href="{{ path('application_show',{slug:application.slug}) }}">
+                                {% if app.user and application.isDownloadedBy(app.user) %}
+                                    <i class="fa fa-check-circle"></i>
+                                {% endif %}
+                                {{ application.title }} </a>
+                            {% for executable in application.executables %}
+                                {% if executable.platform == 'Windows' %}
+                                    <i class="fab fa-windows"></i>
+                                {% elseif executable.platform == "Mac" %}
+                                    <i class="fab fa-apple"></i>
+                                {% elseif executable.platform == "Linux" %}
+                                    <i class="fab fa-linux"></i>
+                                {% elseif executable.platform == "Android" %}
+                                    <i class="fab fa-android"></i>
+                                {% endif %}
+                            {% endfor %}
+
+                        </h4>
+                        {{ application.shortDescription }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <h2>Aucune application ne correspond à "{{ query }}"</h2>
+        {% endif %}
+    {% else %}
+        <h2>Veuillez taper le mot clé correspondant à l'application que vous cherchez</h2>
+    {% endif %}
 {% endblock %}
 
 {% block title %}
-Recherche
+    Recherche
+    {% if query is defined %}
+        "{{ query }}"
+    {% endif %}
 {% endblock %}
 

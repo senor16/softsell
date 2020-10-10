@@ -19,6 +19,23 @@ class AppRepository extends ServiceEntityRepository
         parent::__construct($registry, App::class);
     }
 
+    /**
+     * @param $value
+     * @return mixed
+     */
+    public function search($value)
+    {
+        return $this->createQueryBuilder('a')
+
+            ->andWhere("a.title LIKE :val")
+            ->setParameter('val', '%'.$value.'%')
+            ->andWhere('a.isReleased = true')
+            ->orderBy('a.id', 'ASC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult();
+    }
+
     // /**
     //  * @return App[] Returns an array of App objects
     //  */

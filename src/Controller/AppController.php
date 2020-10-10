@@ -81,7 +81,7 @@ class AppController extends AbstractController
 
         $form = $this->createForm(AppFormType::class, $application);
         $form->handleRequest($request);
-        dump($form->getData());
+
 
         if ($form->isSubmitted() && $form->isValid()) {
 
@@ -489,7 +489,7 @@ class AppController extends AbstractController
             }
 
             try {
-            unlink($this->getParameter('cover_directory').'/'.$this->getUser()->getId().'/'.$app->getCover());
+            unlink($this->getParameter('cover_directory').'/'.$this->getUser()->getId().'/'.$app->getId().'/'.$app->getCover());
             } catch (\Exception $e) {
             }
 
@@ -531,13 +531,37 @@ class AppController extends AbstractController
     }
 
     /**
+     * @param Request $request
+     * @param AppRepository $appRepository
      * @return Response
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      * @Route("/search", name="apllication_search")
      */
     public function search(Request $request, AppRepository $appRepository): Response
     {
-
-        return new Response($this->twig->render('app/search.html.twig'));
+$q = $request->query->get('q');
+        if (strlen($q)>0) {
+            return new Response(
+                $this->twig->render(
+                    'app/search.html.twig',
+                    [
+                        'applications' => $appRepository->search($q),
+                        'query' => $q
+                    ]
+                )
+            );
+        }else{
+            return new Response(
+                $this->twig->render(
+                    'app/search.html.twig',
+                    [
+                        'error'=>'Champ vide',
+                    ]
+                )
+            );
+        }
     }
 }
 
