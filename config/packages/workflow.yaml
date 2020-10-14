@@ -1,0 +1,29 @@
+#framework:
+#  workflows:
+#    app:
+#        type: state_machine
+#        audit_trail:
+#            enabled: "%kernel.debug%"
+#        marking_store:
+#            type: 'method'
+#            property: 'state'
+#        supports:
+#            - App\Entity\App
+#        initial_marking: submitted
+#        places:
+#            - submitted
+#            - rejected
+#            - ready
+#            - published
+#        transitions:
+#            reject:
+#                from: submitted
+#                to: rejected
+#            publish:
+#                from: submitted
+#                to: ready
+#            optimise:
+#                from: ready
+#                to: published
+#
+#
