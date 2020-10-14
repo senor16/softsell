@@ -39,19 +39,19 @@
                     {% for executable in application.executables %}
                         {% if executable.platform == 'Windows' %}
                             <div class="col-2">
-                                <i class="fab fa-windows"></i> : {{ executable.downloads }}
+                                <i class="fa fa-windows"></i> : {{ executable.downloads }}
                             </div>
                         {% elseif executable.platform == "Mac" %}
                             <div class="col-2">
-                                <i class="fab fa-apple"></i> : {{ executable.downloads }}
+                                <i class="fa fa-apple"></i> : {{ executable.downloads }}
                             </div>
                         {% elseif executable.platform == "Linux" %}
                             <div class="col-2">
-                                <i class="fab fa-linux"></i> : {{ executable.downloads }}
+                                <i class="fa fa-linux"></i> : {{ executable.downloads }}
                             </div>
                         {% elseif executable.platform == "Android" %}
                             <div class="col-2">
-                                <i class="fab fa-android"></i> : {{ executable.downloads }}
+                                <i class="fa fa-android"></i> : {{ executable.downloads }}
                             </div>
                         {% endif %}
                     {% endfor %}
@@ -65,5 +65,5 @@
 
 {% block javascripts %}
     {{ parent() }}
-    <script src="{{ asset('js/screenshots.js') }}"></script>
+    <script src="{{ asset('js/application_delete.js') }}"></script>
 {% endblock %}

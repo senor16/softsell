@@ -2,6 +2,11 @@
 
 {% block title %}{{ application.title }} par {{ application.developer.username }}{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+{% endblock %}
+
 {% block body %}
     {% if (application.cover is null or application.cover =='-') %}
         <p><a href="https://via.placeholder.com/350x250"> <img src="https://via.placeholder.com/350x250"
@@ -23,20 +28,20 @@
                 <small>({{ application.developer.email }})</small></h5>
             <p><h4>Description :</h4>{{ application.description|raw }}</p>
             {% if application.executables|length >0 %}
-                <h3><i class="fas fa-download"></i> Télécharger ( <span
+                <h3><i class="fa fa-download"></i> Télécharger ( <span
                             class="js-downloads">{{ application.getTotalDownloads() }}</span> fois)</h3>
                 {% for executable in application.executables %}
                     <a href="{{ path('application_download', {slug:application.slug, platform:executable.platform}) }}">{{ application.slug~'.'~executable.name|split('.')|last }}
                         ({{ executable.platform }}) </a> : {{ executable.showSize }}
                     <div style="font-size: 1.3em; display: inline;">
                         {% if executable.platform == 'Windows' %}
-                            <i class="fab fa-windows "></i>
+                            <i class="fa fa-windows "></i>
                         {% elseif executable.platform == "Mac" %}
-                            <i class="fab fa-apple"></i>
+                            <i class="fa fa-apple"></i>
                         {% elseif executable.platform == "Linux" %}
-                            <i class="fab fa-linux"></i>
+                            <i class="fa fa-linux"></i>
                         {% elseif executable.platform == "Android" %}
-                            <i class="fab fa-android"></i>
+                            <i class="fa fa-android"></i>
                         {% endif %}
                     </div>
                     <br/>
@@ -60,7 +65,7 @@
                             <B>{{ comment.author }} </B><small>({{ comment.email }})</small>
                             <small>Posté
                                 le {{ comment.createdAt|format_datetime('medium', 'short', locale='fr') }}</small><br/>
-                            {{ comment.text }}
+                            {{ comment.text|raw }}
                         </p>
                     {% endfor %}
                     <p>

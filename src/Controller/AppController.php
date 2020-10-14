@@ -274,7 +274,7 @@ class AppController extends AbstractController
 
         return new Response(
             $this->twig->render(
-                'app/upload.html.twig',
+                'app/new.html.twig',
                 [
                     'application_form' => $form->createView(),
                     'edit_mode' => $application->getId() !== null,
