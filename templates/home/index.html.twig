@@ -25,13 +25,13 @@
                             {{ application.title }} </a>
                         {% for executable in application.executables %}
                             {% if executable.platform == 'Windows' %}
-                                <i class="fab fa-windows"></i>
+                                <i class="fa fa-windows"></i>
                             {% elseif executable.platform == "Mac" %}
-                                <i class="fab fa-apple"></i>
+                                <i class="fa fa-apple"></i>
                             {% elseif executable.platform == "Linux" %}
-                                <i class="fab fa-linux"></i>
+                                <i class="fa fa-linux"></i>
                             {% elseif executable.platform == "Android" %}
-                                <i class="fab fa-android"></i>
+                                <i class="fa fa-android"></i>
                             {% endif %}
                         {% endfor %}
 

@@ -255,8 +255,9 @@
 {% endblock %}
 
 {% block javascripts %}
-{{ parent() }}
-<script src="{{ asset('js/application_delete.js') }}"></script>
+    {{ parent() }}
+    {{ encore_entry_script_tags('application_delete') }}
+    {{ encore_entry_script_tags('application_form') }}
 {% endblock %}
 
 
