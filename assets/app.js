@@ -11,7 +11,6 @@ import $ from 'jquery';
 import 'bootstrap';
 import 'summernote';
 
-
 /**
  * Summernote
  */
@@ -19,12 +18,12 @@ $('#app_form_description').summernote({
     height: 300,
     shortcuts: false,
     toolbar: [
-        ['style', ['bold', 'italic', 'underlined', 'clear']],
+        ['style', ['style','bold', 'italic', 'underlined', 'clear']],
         ['font', ['strikethrough', 'superscript', 'subscript']],
 
         ['fontname', ['fontname', 'fontsize']],
         ['color', ['color']],
-        ['para', ['ul', 'ol', 'paragraph']],
+        ['paragraph', ['ul', 'ol', 'paragraph']],
         ['media', ['link']],
         ['height', ['codeview', 'undo', 'redo']]
     ]
