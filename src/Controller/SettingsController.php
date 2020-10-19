@@ -4,10 +4,9 @@
 namespace App\Controller;
 
 
-use App\Entity\Screenshot;
+use App\Form\PasswordFormType;
+use App\Form\PasswordType;
 use App\Form\UserSettingsType;
-use App\ImageOptimizer;
-use App\Repository\ScreenshotRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -15,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -38,8 +38,6 @@ class SettingsController extends AbstractController
     /**
      * @param Request $request
      * @param UserRepository $repository
-     * @param ScreenshotRepository $screenshotRepository
-     * @param ImageOptimizer $imageOptimizer
      * @return Response
      * @throws LoaderError
      * @throws RuntimeError
@@ -47,7 +45,7 @@ class SettingsController extends AbstractController
      * @IsGranted("ROLE_USER")
      * @Route("/settings", name="user_settings")
      */
-    public function settings(Request $request, UserRepository $repository, ImageOptimizer $imageOptimizer): Response
+    public function settings(Request $request, UserRepository $repository): Response
     {
 
 
@@ -115,5 +113,54 @@ class SettingsController extends AbstractController
 
     }
 
-    
+    /**
+     * @param Request $request
+     * @param UserRepository $repository
+     * @param UserPasswordEncoderInterface $encoder
+     * @return Response
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     * @IsGranted("ROLE_USER")
+     * @Route("/settings/change-password", name="user_change_password")
+     */
+    public function password(Request $request, UserRepository $repository,UserPasswordEncoderInterface $encoder): Response
+    {
+        $user = $repository->findOneBy(['username' => $this->getUser()->getUsername()]);
+        $form = $this->createForm(PasswordFormType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+
+
+            $old_password = $encoder->encodePassword($user, $form->getData()->getOldPassword());
+            if($old_password === $user->getPassword()) {
+
+                $new_password = $encoder->encodePassword($user, $form->getData()->getNewPassword());
+                $user
+                    ->setPassword($new_password);
+
+                $this->entityManager->persist($user);
+                $this->entityManager->flush();
+
+                return $this->redirectToRoute('user_change_password',['success'=>true]);
+            }
+        }
+
+        $success=false;
+        if ($request->get('success'))
+            $success = true;
+        return new Response(
+            $this->twig->render(
+                'security/password.html.twig',
+                [
+                    'password_form' => $form->createView(),
+                    'success'=>$success,
+                ]
+            )
+        );
+    }
+
+
 }

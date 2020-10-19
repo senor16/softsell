@@ -46,11 +46,23 @@ class User implements UserInterface
      * @Assert\Length(min="8", minMessage="Votre mot de passe doit faire au minimum 8 caractères")
      */
     private $password;
+    private $oldPassword;
+
 
     /**
      * @Assert\EqualTo(propertyPath="password", message="Vos mots de passes ne correspondent pas")
      */
     private $confirmPassword;
+
+    /**
+     * @Assert\Length(min="8", minMessage="Votre mot de passe doit faire au minimum 8 caractères")
+     */
+    private $newPassword;
+
+    /**
+     * @Assert\EqualTo(propertyPath="newPassword", message="Vos mots de passes ne correspondent pas")
+     */
+    private $confirmNewPassword;
 
     /**
      * @ORM\Column(type="datetime")
@@ -163,6 +175,16 @@ class User implements UserInterface
         return $this;
     }
 
+    public function getOldPassword()
+    {
+        return $this->oldPassword;
+    }
+    public function setOldPassword($oldPassword): void
+    {
+        $this->oldPassword = $oldPassword;
+    }
+
+
 
     /**
      * @return mixed
@@ -179,6 +201,27 @@ class User implements UserInterface
     {
         $this->confirmPassword = $confirmPassword;
     }
+
+    public function getNewPassword()
+    {
+        return $this->newPassword;
+    }
+
+    public function setNewPassword($newPassword): void
+    {
+        $this->newPassword = $newPassword;
+    }
+
+    public function getConfirmNewPassword()
+    {
+        return $this->confirmNewPassword;
+    }
+
+    public function setConfirmNewPassword($confirmNewPassword): void
+    {
+        $this->confirmNewPassword = $confirmNewPassword;
+    }
+
 
 
     public function getCreatedAt(): ?\DateTimeInterface
