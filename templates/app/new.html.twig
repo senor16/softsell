@@ -5,9 +5,9 @@
 {% endblock %}
 {% block title %}
     {% if(edit_mode) %}
-        Modifier les informations de l'application
+        Modifier le projet
     {% else %}
-        Ajouter une nouvelle application
+        Ajouter un nouveau projet
     {% endif %}
 {% endblock %}
 {% block body %}
@@ -203,19 +203,20 @@
             </div>
 
 
+            <button type="submit" class="btn btn-success">Enregistrer</button>
             {{ form_row(application_form.isReleased,{'label':'Rendre l\'application visible par tous', label_attr:{class: 'switch-custom'}}) }}
 
-            <button type="submit" class="btn btn-success">Enregistrer</button>
             <p></p>
         </div>
 
-        <div class="col-3">
+        <div class="col-4">
             {{ form_row(application_form.coverFile, {
                 'label':'Image de couverture'
             }) }}
             {% if edit_mode %}
-                <img src="{{ asset('uploads/images/'~application.developer.id~'/'~application.id~'/'~application.cover|split('.')|first~'-mini.'~application.cover|split('.')|last) }}"
-                     alt="Cover {{ application.title }}"/><br/>
+                <a href="{{ asset('uploads/images/'~application.developer.id~'/'~application.id~'/'~application.cover) }}"><img
+                            src="{{ asset('uploads/images/'~application.developer.id~'/'~application.id~'/'~application.cover|split('.')|first~'-mini.'~application.cover|split('.')|last) }}"
+                            alt="Cover {{ application.title }}"/></a><br/>
             {% endif %}
 
             {{ form_row(application_form.screenshotsFile, {

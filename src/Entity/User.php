@@ -67,10 +67,12 @@ class User implements UserInterface
      */
     private $gender;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $avatar;
+
+
+    private $avatarFile;
+
+
+
 
     /**
      * @ORM\OneToMany(targetEntity=AppDownload::class, mappedBy="user")
@@ -86,6 +88,19 @@ class User implements UserInterface
      * @ORM\OneToMany(targetEntity=App::class, mappedBy="developer")
      */
     private $publishedApp;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $displayName;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Url()
+     */
+    private $website;
+
+
 
     public function __construct()
     {
@@ -202,16 +217,16 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getAvatar(): ?string
+  
+    public function getAvatarFile()
     {
-        return $this->avatar;
+        return $this->avatarFile;
     }
 
-    public function setAvatar(string $avatar): self
-    {
-        $this->avatar = $avatar;
 
-        return $this;
+    public function setAvatarFile($avatarFile): void
+    {
+        $this->avatarFile = $avatarFile;
     }
 
     /**
@@ -338,4 +353,29 @@ class User implements UserInterface
     {
         return $this->username;
     }
+
+    public function getDisplayName(): ?string
+    {
+        return $this->displayName;
+    }
+
+    public function setDisplayName(?string $displayName): self
+    {
+        $this->displayName = $displayName;
+
+        return $this;
+    }
+
+    public function getWebsite(): ?string
+    {
+        return $this->website;
+    }
+
+    public function setWebsite(?string $website): self
+    {
+        $this->website = $website;
+
+        return $this;
+    }
+
 }

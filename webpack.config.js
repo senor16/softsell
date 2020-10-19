@@ -26,6 +26,7 @@ Encore
     .addEntry('app', './assets/app.js')
     .addEntry('application_delete','./assets/components/application_delete.js')
     .addEntry('application_form','./assets/components/application_form.js')
+    .addStyleEntry('settings', './assets/styles/components/settings.scss')
     //.addEntry('page1', './assets/page1.js')
     //.addEntry('page2', './assets/page2.js')
 

@@ -1,12 +1,59 @@
 {% extends 'base.html.twig' %}
 
-{% block body %}
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item active">Paramètres</li>
-    </ol>
+{% block title %}
+    Paramètres
 {% endblock %}
 
-{% block title %}
-Paramètres
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('settings') }}
 {% endblock %}
+
+{% block body %}
+    <ol class="breadcrumb">
+        <h2>
+            <li class="breadcrumb-item active">Paramètres ducompte</li>
+        </h2>
+    </ol>
+
+
+    <div class="row">
+        <div class="col-1 panneau-menu">
+            <a href="">Profil</a>
+        </div>
+
+        <div class="col-8">
+            <h3>Profil</h3>
+            {{ form_start(settings_form) }}
+            {{ form_row(settings_form.first_name, {label:'Prénom'}) }}
+            {{ form_row(settings_form.last_name, {label:'Nom(s)'}) }}
+            {{ form_row(settings_form.username, {label:'Nom d\'utilisateur'}) }}
+            <label for="user_settings_gender">Genre</label>
+            {{ form_row(settings_form.gender,{label:' ',placeholder:'Choisissez un genre',attr:{class:'custom-select'}}) }}
+{#            {{ form_row(settings_form.avatarFile, {label:'Image de profil'}) }}#}
+{#            {% if app.user.avatar is not null %}#}
+{#                <a href="{{ asset('uploads/images/'~app.user.id~'/'~app.user.avatar.filename) }}"> <img#}
+{#                            src="{{ asset('uploads/images/'~app.user.id~'/'~app.user.avatar.mini) }}"#}
+{#                            alt="Image de profil"/></a>#}
+{#            {% endif %}#}
+            {% if is_granted('ROLE_DEVELOPER') %}
+
+                {{ form_row(settings_form.displayName, {label:'Pseudonyme affiché - Nom à afficher à la place de votre nom d’utilisateur, laissez vide pour utiliser votre nom d’utilisateur'}) }}
+            {% endif %}
+            {% if app.user.website == '' %}
+                {{ form_row(settings_form.website, {value:'https://'}) }}
+            {% else %}
+                {{ form_row(settings_form.website) }}
+            {% endif %}
+            <button type="submit" class="btn btn-success">Enregistrer</button>
+            {{ form_end(settings_form) }}
+            <p></p>
+
+            {% if user is defined %}
+                {{ user.website }}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
 

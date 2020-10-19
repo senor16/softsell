@@ -18,11 +18,8 @@ $('#app_form_description').summernote({
     height: 300,
     shortcuts: false,
     toolbar: [
-        ['style', ['style','bold', 'italic', 'underlined', 'clear']],
+        ['style', ['bold', 'italic', 'underlined', 'clear']],
         ['font', ['strikethrough', 'superscript', 'subscript']],
-
-        ['fontname', ['fontname', 'fontsize']],
-        ['color', ['color']],
         ['paragraph', ['ul', 'ol', 'paragraph']],
         ['media', ['link']],
         ['height', ['codeview', 'undo', 'redo']]

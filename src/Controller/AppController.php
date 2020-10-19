@@ -109,6 +109,18 @@ class AppController extends AbstractController
                 $name = bin2hex(random_bytes(12));
                 $coverName = $name.'.'.$cover->guessExtension();
                 $coverMiniName = $name.'-mini.'.$cover->guessExtension();
+
+                try {
+                    unlink(
+                        $destination.'/'.$application->getCover()
+                    );
+                    $extension = strstr($application->getCover(), '.');
+                    $avatar_mini = str_replace($extension, '-mini'.$extension, $application->getCover());
+                    unlink(
+                        $destination.'/'.$avatar_mini
+                    );
+                } catch (\Exception $e) {}
+
                 try {
                     $cover->move($destination, $coverName);
                     $imageOptimizer->resize(
@@ -116,12 +128,9 @@ class AppController extends AbstractController
                         $destination.'/'.$coverMiniName,
                         'cover'
                     );
-                } catch (\Exception $e) {
-                }
+                } catch (\Exception $e) {}
                 $application->setCover($coverName);
 
-//                $this->entityManager->persist($application);
-//                $this->entityManager->flush();
             }
             foreach ($screenshots as $screenshot) {
                 $name = bin2hex(random_bytes(12));
@@ -269,7 +278,7 @@ class AppController extends AbstractController
             $this->entityManager->flush();
 
 
-            return $this->redirectToRoute('application_show', ['slug' => $application->getSlug()]);
+//            return $this->redirectToRoute('application_show', ['slug' => $application->getSlug()]);
         }
 
         return new Response(

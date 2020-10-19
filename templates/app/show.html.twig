@@ -1,6 +1,12 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ application.title }} par {{ application.developer.username }}{% endblock %}
+{% block title %}{{ application.title }} par
+    {% if application.developer.displayName == '' %}
+        {{application.developer.username}}
+    {% else %}
+        {{application.developer.displayName}}
+    {% endif %}
+{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -12,7 +18,8 @@
         <p><a href="https://via.placeholder.com/350x250"> <img src="https://via.placeholder.com/350x250"
                                                                alt="cover"/></a></p>
     {% else %}
-        <p><a href="{{ asset('uploads/images/'~application.developer.id~'/'~application.id~'/'~application.cover) }}"> <img
+        <p><a href="{{ asset('uploads/images/'~application.developer.id~'/'~application.id~'/'~application.cover) }}">
+                <img
                         src="{{ asset('uploads/images/'~application.developer.id~'/'~application.id~'/'~application.cover) }}"
                         alt="cover"/></a></p>
     {% endif %}
@@ -23,13 +30,18 @@
                 Cathégorie : {{ application.genre.fr }}<br/>
                 Publié le {{ application.createdAt|format_datetime('medium', 'short', locale='fr') }}
             </p>
-            <h5>Autheur
-                <b>: {{ application.developer.firstName ~' '~ application.developer.lastName }}</b>
+            <h5>Par
+                {% if application.developer.displayName == '' %}
+                    <b>: {{application.developer.username}}</b>
+                {% else %}
+                    <b>: {{application.developer.displayName}}</b>
+                {% endif %}
                 <small>({{ application.developer.email }})</small></h5>
-            <p><h4>Description :</h4>{{ application.description|raw }}</p>
+
+            <h4>Description :</h4>{{ application.description|raw }}
+
             {% if application.executables|length >0 %}
-                <h3><i class="fa fa-download"></i> Télécharger ( <span
-                            class="js-downloads">{{ application.getTotalDownloads() }}</span> fois)</h3>
+                <h3><i class="fa fa-download"></i> Télécharger </h3>
                 {% for executable in application.executables %}
                     <a href="{{ path('application_download', {slug:application.slug, platform:executable.platform}) }}">{{ application.slug~'.'~executable.name|split('.')|last }}
                         ({{ executable.platform }}) </a> : {{ executable.showSize }}

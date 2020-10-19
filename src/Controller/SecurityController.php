@@ -58,6 +58,8 @@ class SecurityController extends AbstractController
             $this->entityManager->persist($user);
             $this->entityManager->flush();
 
+
+
             return $this->redirectToRoute('app_login');
         }
 
@@ -140,23 +142,14 @@ class SecurityController extends AbstractController
      * @IsGranted("ROLE_USER")
      * @Route("/profile", name="user_profile")
      */
-    public function profile():Response{
+    public function profile(): Response
+    {
+
         return new Response($this->twig->render('security/profile.html.twig'));
-
     }
 
-    /**
-     * @return Response
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
-     * @IsGranted("ROLE_USER")
-     * @Route("/settings", name="user_settings")
-     */
-    public function settings():Response{
-        return new Response($this->twig->render('security/settings.html.twig'));
 
-    }
+
 
 
 }
