@@ -11,9 +11,9 @@
 
 {% block body %}
     <ol class="breadcrumb">
-        <h2>
+        <h3>
             <li class="breadcrumb-item active">Paramètres ducompte</li>
-        </h2>
+        </h3>
     </ol>
 
 
@@ -21,9 +21,13 @@
         <div class="col-2 panneau-menu">
             <li><a href="{{ path('user_settings') }}">Profil *</a></li>
             <li><a href="{{ path('user_change_password') }}">Mot de passe</a></li>
+            <li><a href="{{ path('user_change_email') }}">Adresse Email</a></li>
         </div>
 
         <div class="col-8">
+            {% if success %}
+                <h3 style="color: green">Modifications enregistréee avec succèss</h3>
+            {% endif %}
             <h3>Profil</h3>
             {{ form_start(settings_form) }}
             {{ form_row(settings_form.first_name, {label:'Prénom'}) }}

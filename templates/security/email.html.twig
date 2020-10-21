@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Paramètres
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('settings') }}
+{% endblock %}
+
+{% block body %}
+    <ol class="breadcrumb">
+        <h3>
+            <li class="breadcrumb-item active">Paramètres ducompte</li>
+        </h3>
+    </ol>
+
+    <div class="row">
+        <div class="col-2 panneau-menu">
+            <li><a href="{{ path('user_settings') }}">Profil</a></li>
+            <li><a href="{{ path('user_change_password') }}">Mot de passe</a></li>
+            <li><a href="{{ path('user_change_email') }}">Adresse Email *</a></li>
+        </div>
+        <div class="col-8">
+            <h3>Adresse Email</h3>
+
+            {% if success %}
+                <h3 style="color: green">Votre adresse email a été modifié avec succèss</h3>
+            {% endif %}
+            {{ form_start(email_form) }}
+            {% if show %}
+                {{ form_row(email_form.newEmail,{label:'Nouvelle adresse emaill',type:'email'}) }}
+            {% else %}
+                {{ form_row(email_form.newEmail,{label:'Nouvelle adresse emaill',value:'',type:'email'}) }}
+            {% endif %}
+                {{ form_row(email_form.oldPassword,{label:'Mot de passe actuel',value:'',type:'password'}) }}
+            <button type="submit" class="btn btn-success">Enregistrer</button>
+            <p></p>
+            {{ form_end(email_form) }}
+        </div>
+    </div>
+{% endblock %}

@@ -40,6 +40,7 @@ class User implements UserInterface
      * @Assert\Email()
      */
     private $email;
+    private $newEmail;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -108,7 +109,6 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Url()
      */
     private $website;
 
@@ -162,6 +162,24 @@ class User implements UserInterface
 
         return $this;
     }
+
+
+    /**
+     * @return mixed
+     */
+    public function getNewEmail()
+    {
+        return $this->newEmail;
+    }
+
+    /**
+     * @param mixed $newEmail
+     */
+    public function setNewEmail($newEmail): void
+    {
+        $this->newEmail = $newEmail;
+    }
+
 
     public function getPassword(): ?string
     {
