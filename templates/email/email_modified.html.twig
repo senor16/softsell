@@ -1,0 +1,6 @@
+{% extends '@email/default/notification/body.html.twig' %}
+
+{% block content %}
+    <p>Vous venez de changer votre adresse e-mail</p>
+    <p>Nous vous contacterons désormais à l'adresse email <i>{{ new_email }}</i></p>
+{% endblock %}

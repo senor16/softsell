@@ -8,10 +8,13 @@ use App\Form\UserRegistrationType;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -60,7 +63,6 @@ class SecurityController extends AbstractController
             $this->entityManager->flush();
 
 
-
             return $this->redirectToRoute('app_login');
         }
 
@@ -78,7 +80,7 @@ class SecurityController extends AbstractController
     /**
      * @Route("/sign-up", name="security_user_sign_up")
      */
-    public function signup(Request $request, UserPasswordEncoderInterface $encoder)
+    public function signup(MailerInterface $mailer, Request $request, UserPasswordEncoderInterface $encoder)
     {
         $user = new User();
 
@@ -88,13 +90,21 @@ class SecurityController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $hash = $encoder->encodePassword($user, $user->getPassword());
             $user->setPassword($hash)
-                ->setAvatar('-')
                 ->setRole('ROLE_USER')
                 ->setCreatedAt(new \DateTime());
 
 
             $this->entityManager->persist($user);
             $this->entityManager->flush();
+
+            $email = (new TemplatedEmail())
+                ->from(new Address('contact@jakpaa.com', 'Jakpaa'))
+                ->to(new Address($user->getEmail(), $user->getFirstName()))
+                ->subject('Welcome ! My Lightning Jakpaa !')
+                ->htmlTemplate('email/welcome.html.twig');
+//                ->context(['first_name' => $user->getFirstName()]);
+
+            $mailer->send($email);
 
             return $this->redirectToRoute('app_login');
         }
@@ -148,9 +158,6 @@ class SecurityController extends AbstractController
 
         return new Response($this->twig->render('security/profile.html.twig'));
     }
-
-
-
 
 
 }
